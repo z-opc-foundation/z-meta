@@ -37,11 +37,13 @@
             <groupId>com.zifang</groupId>
             <artifactId>z-boot-datasource-starter</artifactId>
         </dependency>
+        <!-- 2026-09-29 迁移：这里原先写死 <version>4.1.0</version>。模块 pom 里的字面 version 顶过
+             所有 DM（README「消费模型」trap 3），删掉改由父链下发——地板发布件的面值实测同为 4.1.0，
+             两侧 tree 逐字同值，这一刀不改版本。 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
-                <version>4.1.0</version>
-            </dependency>
+        </dependency>
     </dependencies>
 
 </project>

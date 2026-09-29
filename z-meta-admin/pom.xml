@@ -53,11 +53,13 @@
             
         </dependency>
 
+        <!-- 2026-09-29 迁移：这里原先写死 <version>4.1.0</version>（trap 3：模块 pom 的字面 version
+             顶过所有 DM）。本仓 reactor 不含 z-meta-admin，这一处不参与 `mvn -f pom.xml` 构建，
+             改动只用 `mvn validate -f z-meta-admin/pom.xml` 验；父链地板面值实测同为 4.1.0。 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
-                <version>4.1.0</version>
-            </dependency>
+        </dependency>
 
         <dependency>
             <groupId>io.github.yuku123</groupId>
