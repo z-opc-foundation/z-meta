@@ -141,24 +141,17 @@
                 <type>pom</type>
             </dependency>
 
-            <!-- com.zifang:z-boot-*-starter 这两格**逐字保留、不动**（迁移前就是这个写法）。
-                 它们不是本 reactor 的坐标，而是 z-boot 仓在旧 namespace 下的构件，只有本机 ~/.m2 里
-                 装过的 1.0.0-SNAPSHOT（实测 ~/.m2/repository/com/zifang/z-boot-web-starter 与
-                 z-boot-datasource-starter 都只有 1.0.0-SNAPSHOT 一格），repo1 上永远是 404。
-                 父链供的是 io.github.yuku123:z-boot-web-starter / z-boot-datasource-starter = 1.0.19，
-                 **坐标不同就顶不上**：把模块 pom 里的 groupId 换成 io.github.yuku123 等于把
-                 1.0.0-SNAPSHOT 的本地快照换成 1.0.19 的发布件（实现换血），不在"统一继承 parent"这一刀里，
-                 已记入迁移报告的"拒绝裁定"；repo1-only 那遍对这两件的 red 也按判据 5 原样交账。 -->
-            <dependency>
-                <groupId>com.zifang</groupId>
-                <artifactId>z-boot-web-starter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zifang</groupId>
-                <artifactId>z-boot-datasource-starter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+            <!-- com.zifang:z-boot-*-starter 这两条 DM 格 2026-09-29 删掉，模块侧 groupId 换成
+                 io.github.yuku123、版本交给继承来的 z-boot-parent 下发。
+                 迁移那一轮这里记的是"逐字保留、不动"，理由是换坐标＝把本地 1.0.0-SNAPSHOT 快照换成
+                 发布件（实现换血），超出"统一继承 parent"那一刀的范围 —— 理由当时成立，但它把
+                 "这两件在 repo1 上永远 404"这笔账留在了盘上：clean-room 实测
+                 Could not find artifact com.zifang:z-boot-datasource-starter:jar:1.0.0-SNAPSHOT，
+                 z-meta-core 起不来，也就是 z-meta 到今天只能在本机构建。
+                 这次换坐标前先比过实现：1.0.21 发布件与旧快照的 class 集合只差
+                 com.zifang.z.boot.datasource.starter.PageResult（那是 #8 PageResult 收编时从
+                 starter 里拿掉的），而本仓对 com.zifang.z.boot.* 的 import 只有
+                 MetaModuleDataSource 一处，两边全限定名一致 ⇒ 换过去不是换血，是补上那一刀没做完的账。 -->
             <!-- z-meta-admin 不在 <modules> 里（上面那段注释：只留源码目录，standalone 时单独构建），
                  所以它不进 tree、这一格在本仓的实测差异是 0；留着是因为旧 parent 的 DM 确实供它
                  （实测 phantom-dm 里 com.zifang:z-meta-admin = ${project.version}），而 `mvn -f z-meta-admin/pom.xml`
