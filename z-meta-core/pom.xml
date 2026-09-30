@@ -4,12 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.zifang</groupId>
+        <groupId>io.github.yuku123</groupId>
         <artifactId>z-meta</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>z-meta-core</artifactId>
+
+    <name>z-meta-core</name>
+    <description>元数据平台核心：应用/租户/字典/API/私有配置的实体、MyBatis Mapper 与 Service，含 @BizModel 采集器</description>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -19,7 +22,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.zifang</groupId>
+            <groupId>io.github.yuku123</groupId>
             <artifactId>z-meta-api</artifactId>
         </dependency>
         <dependency>

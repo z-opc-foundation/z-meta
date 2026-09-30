@@ -23,12 +23,21 @@
 
     <!-- 这两行以前没有：groupId/version 都是从 com.zifang:z-opc:1.0.0-SNAPSHOT 那条 parent 继承的。
          换 parent 后继承来的就是 io.github.yuku123:z-boot-parent:1.0.19 ⇒ 不写字面自家的话，本仓坐标会变成
-         io.github.yuku123:z-meta:1.0.19，而 4 个子 pom 的 <parent> 全写死 com.zifang:z-meta:1.0.0-SNAPSHOT，
-         当场读不动。这里只做"将原先隐式的坐标改成显式、逐字同值"：**不换 groupId、不抬版本**
-         （抬号在全组织那一批量里做，这次一刀都不动；换 namespace 是另一件事，见迁移报告的"拒绝裁定"）。 -->
-    <groupId>com.zifang</groupId>
+         io.github.yuku123:z-boot-parent 那一格，而 4 个子 pom 的 parent 全写死自家坐标，当场读不动。
+         迁移那一轮只做"把隐式坐标改成显式、逐字同值"，groupId/版本都不动（换 namespace 记在迁移报告的
+         "拒绝裁定"里）。2026-09-30 CEO 裁定"上到中央仓库"，这一刀现在做完：
+           groupId com.zifang → io.github.yuku123（与本组织已发布的 26 个仓同一 namespace）
+           版本 1.0.0-SNAPSHOT → 1.0.0（Central 不接受 SNAPSHOT；repo1 实测 z-meta /
+             z-meta-api / z-meta-core / z-meta-web / z-meta-frontend 在两个 namespace 下全部 404
+             ⇒ 1.0.0 是这些坐标的第一个号，不顶掉任何已发布件）
+         Java 包名仍是 com.zifang.*：换的是 Maven 坐标，不是 namespace（同 z-cache/z-util 的口径）。
+         连带改动：仓内所有自家坐标（根 dependencyManagement 那 6 格 + 各子 pom 的 parent 与
+         sibling 依赖）一起换，org 内除 z-opc 单体副本外没有别的仓引用这几个构件（实测全仓 grep），
+         所以这次翻转不影响任何已发布件的解析。 -->
+
+    <groupId>io.github.yuku123</groupId>
     <artifactId>z-meta</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <licenses>
@@ -81,7 +90,10 @@
         <!-- z-meta-admin 已废弃: controllers + AutoConfiguration 全迁到 z-meta-web.
              保留 z-meta-admin 源码目录仅作历史参考, 不参与构建以避免 application.yml 污染 main-starter.
              如需 standalone admin, 请独立启动 z-meta-admin 并用 server.port=18086 覆盖. -->
-        <module>_frontend</module>
+        <!-- 前端 Vite/Node 不参与 Maven 发布：它的 dist 是拷进 z-meta-admin/src/main/resources/static
+             （上面已废弃、不在 reactor），要这条模块只会让发布构建去 nodejs.org 下 node；
+             提交在仓里的 static 资产（git ls-files 实测 10 个文件）不受影响。同做法见 z-config/pom.xml。 -->
+        <!-- <module>_frontend</module> -->
     </modules>
     <properties>
         <!-- 迁移删掉的键（逐条按**坐标**对过 parent_preflight 第 2 节 + 两侧 dependency:tree 实测）：
@@ -114,28 +126,28 @@
                  匹配，不带 type 的条目挂在根本不存在的 jar 坐标上（z-mist 同一处实测）。
                  z-meta-api / z-meta-core 两条迁移前就在，逐字未动。 -->
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-meta</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-meta-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-meta-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-meta-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-meta-frontend</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
@@ -157,7 +169,7 @@
                  （实测 phantom-dm 里 com.zifang:z-meta-admin = ${project.version}），而 `mvn -f z-meta-admin/pom.xml`
                  那条既有走法依赖它。删掉就是悄悄砍掉一条对外契约。 -->
             <dependency>
-                <groupId>com.zifang</groupId>
+                <groupId>io.github.yuku123</groupId>
                 <artifactId>z-meta-admin</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -279,4 +291,135 @@
             </plugin>
         </plugins>
     </build>
+    <!-- ═══════ 中央发布通道（2026-09-30 CEO 裁定「上到中央仓库」）═══════
+         逐件抄 z-cache/pom.xml 的 central profile，插件版本面值一件不改：
+         distributionManagement 指 https://central.sonatype.com（server id central 的凭据只在
+         ~/.m2/settings.xml，值不落仓）；maven-deploy-plugin 3.1.4 skip=true，上传由
+         central-publishing-maven-plugin 0.7.0 接管（tokenAuth + autoPublish + waitUntil=uploaded）；
+         maven-source-plugin 3.3.0、maven-javadoc-plugin 3.11.2（doclint=none + failOnError=false）、
+         maven-gpg-plugin 3.2.7（passphrase 只从 -Dgpg.passphrase 传，不写进 pom 也不写进命令行历史）。
+         发布用 pom 的自包含由上面常开的 flatten(oss) + updatePomFile 负责。 -->
+    <profiles>
+        <profile>
+            <id>central</id>
+            <properties>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
+                <central.gpg.skip>false</central.gpg.skip>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>central</id>
+                    <url>https://central.sonatype.com</url>
+                </repository>
+                <snapshotRepository>
+                    <id>central</id>
+                    <url>https://central.sonatype.com</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.1.4</version>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.11.2</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <failOnError>false</failOnError>
+                            <failOnWarnings>false</failOnWarnings>
+                            <quiet>true</quiet>
+                            <!-- Java 口径由 parent 的 pluginManagement 下发（z-cache 这里原先引的是
+                                 本仓没定义过的 compile.version，配 failOnError=false 后静默变成无效参数） -->
+                            <source>${maven.compiler.source}</source>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.7</version>
+                        <configuration>
+                            <skip>${central.gpg.skip}</skip>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                                <arg>--no-tty</arg>
+                            </gpgArguments>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.7.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <tokenAuth>true</tokenAuth>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>uploaded</waitUntil>
+                            <waitMaxTime>1800</waitMaxTime>
+                            <waitPollingInterval>10</waitPollingInterval>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- 真发前的形状检查：同一套 distributionManagement，只跳 javadoc 与签名。
+             与 central 一起开（-Pcentral,central-dryrun）时后者的 properties 覆盖 skip 两格。 -->
+        <profile>
+            <id>central-dryrun</id>
+            <properties>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+                <central.gpg.skip>true</central.gpg.skip>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>central</id>
+                    <url>https://central.sonatype.com</url>
+                </repository>
+                <snapshotRepository>
+                    <id>central</id>
+                    <url>https://central.sonatype.com</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>

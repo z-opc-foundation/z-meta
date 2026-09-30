@@ -4,12 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.zifang</groupId>
+        <groupId>io.github.yuku123</groupId>
         <artifactId>z-meta</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>z-meta-web</artifactId>
+
+    <name>z-meta-web</name>
     <description>业务模型可视化中心 - web 模块：DictController + MetaApplicationController + MetaTenantController +
         ApiController + PrivateConfigController + BizModelController + HealthController (供 main-starter embed)
     </description>
@@ -22,7 +24,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.zifang</groupId>
+            <groupId>io.github.yuku123</groupId>
             <artifactId>z-meta-core</artifactId>
         </dependency>
         <dependency>

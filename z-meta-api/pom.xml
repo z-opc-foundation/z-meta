@@ -4,10 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.zifang</groupId>
+        <groupId>io.github.yuku123</groupId>
         <artifactId>z-meta</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>z-meta-api</artifactId>
+
+    <name>z-meta-api</name>
+    <description>元数据平台注解 API：@BizModel / @BizField，零实现零依赖，供业务侧声明模型元数据</description>
     <packaging>jar</packaging>
 </project>
