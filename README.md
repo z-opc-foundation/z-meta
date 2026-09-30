@@ -254,4 +254,4 @@ _Maintained by the z-opc-foundation organization._
   - [`package.sh`](_doc/003_script/package.sh)
   - [`start.sh`](_doc/003_script/start.sh)
 
-- [`_doc/004_skill/`](_doc/004_skill/) — 目前为空目录，暂无 skill
+- `_doc/004_skill/` — 目前为空目录，暂无 skill
