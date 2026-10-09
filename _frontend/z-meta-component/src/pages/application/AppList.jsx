@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, message, Modal, Popconfirm, Select, Space, Table} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
-import request from '../../utils/request';
+import request from '../../services/request';
 
 const {Option} = Select;
 
