@@ -24,7 +24,7 @@ export const menuItems = [
     { key: '/z-meta/api', label: '接口管理', icon: <ApiOutlined /> },
 ]
 
-export const routeTable = [
+export const routes = [
     { path: '/z-meta/home', Component: HomePage },
     { path: '/z-meta/dashboard', Component: Dashboard },
     { path: '/z-meta/tenant', Component: TenantList },
