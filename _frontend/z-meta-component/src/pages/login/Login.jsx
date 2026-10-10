@@ -16,7 +16,7 @@ function Login() {
             localStorage.setItem('token', token);
             localStorage.setItem('username', values.username);
             message.success('登录成功');
-            navigate('/dashboard');
+            navigate('/z-meta/dashboard');
         } catch (error) {
             message.error(error.message || '登录失败');
         } finally {
