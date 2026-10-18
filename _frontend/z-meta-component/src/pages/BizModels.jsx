@@ -1,6 +1,6 @@
 import {Table, Tag} from 'antd'
 import {metaApi} from '../services/api'
-import {PagedTable} from '@/common/components/ui'
+import {PagedTable} from '@yuku123/z-frontend-common/ui'
 
 export default function BizModels() {
     return (

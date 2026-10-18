@@ -6,7 +6,8 @@
   "description": "z-meta 独立运行壳（lead 005 §9.1 suit：AppLayout + manifest 路由；z-meta 无鉴权守卫）。不发布 npm",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "npm run build:component && vite build",
+    "build:component": "cd ../z-meta-component && npm install --silent && npm run build"
   },
   "dependencies": {
     "@yuku123/z-meta-component": "^0.1.0",

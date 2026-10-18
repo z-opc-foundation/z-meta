@@ -1,6 +1,6 @@
 import {Tag} from 'antd'
 import {metaApi} from '../services/api'
-import {PagedTable} from '@/common/components/ui'
+import {PagedTable} from '@yuku123/z-frontend-common/ui'
 
 const statusTag = (v) => (v === 1 ? <Tag color="success">启用</Tag> : <Tag color="default">停用</Tag>)
 

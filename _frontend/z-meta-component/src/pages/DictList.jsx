@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import {Alert, Table, Tag} from 'antd'
 import {metaApi} from '../services/api'
-import {PagedTable} from '@/common/components/ui'
+import {PagedTable} from '@yuku123/z-frontend-common/ui'
 
 /** 字典项按需从 GET /api/dict/items/get 拉, 失败就把错误显示在展开行里, 不静默变空 */
 function DictItems({dictCode}) {

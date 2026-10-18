@@ -1,4 +1,4 @@
-import request from '@/common'
+import request from './request'
 
 /**
  * z-meta (元数据中心) 管理接口 — 与 z-opc 主进程 8888 上的 /api/meta* 一一对应。
