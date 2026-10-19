@@ -79,7 +79,7 @@ Maven 发布，否则构建会去 nodejs.org 下 node（它的 dist 由 `_fronte
 | 层级 | 技术（版本口径均来自 pom 实测） |
 |------|--------------------------------|
 | 语言 / 运行时 | Java 8（`compile.version=8`；`z-boot-parent` 下发 1.8 口径） |
-| 框架 | Spring Boot 2.7.18（由 `z-boot-parent` → 地板 `z-boot-dependencies` 供，本仓不再 import Boot BOM） |
+| 框架 | Spring Boot 2.7.18（由 `z-boot-parent` 自带地板供，本仓不再 import Boot BOM） |
 | 持久层 | MyBatis-Plus 3.5.7 + Druid 1.2.23（均走 `z-boot-datasource-starter`，版本由父链下发） |
 | 数据库驱动 | `com.mysql:mysql-connector-j:8.0.33`（本仓按坐标显式钉，并整条抄回 Boot 的 `protobuf-java` exclusion，防被地板抬到 8.4.0） |
 | 其它显式钉版 | `org.yaml:snakeyaml:2.0`（地板不供这一条，不钉会静默落回 Boot 的 1.30） |
