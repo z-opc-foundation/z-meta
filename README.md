@@ -137,9 +137,11 @@ mapper 走 `MetaModuleDataSource` 的模块数据源。
 | `z.base.db.meta.remove-abandoned` / `.remove-abandoned-timeout` | `Z_BASE_DB_META_REMOVE_ABANDONED` 等同形 |
 | 以上任意键的回退档 | `Z_BASE_DB_DEFAULT_*` |
 
-**凭据只走环境变量注入，禁止写进 yml / jar / 镜像层。** 需要提醒的是：
-`z-meta-admin/src/main/resources/application.yml` 目前仍带着历史遗留的明文连接参数与口令，
-这是待清理项（README 不复述其值），standalone 时请以 `--spring.datasource.*` 或环境变量覆盖。
+**凭据只走环境变量注入，禁止写进 yml / jar / 镜像层。** 2026-10-19 按 001_凭证管理规范 清理：
+`z-meta-admin/src/main/resources/application.yml` 里原先写死的 RDS 连接串与用户名已换成占位符
+（`${SPRING_DATASOURCE_URL:…}` / `${SPRING_DATASOURCE_USERNAME:}`），口令早已是
+`${SPRING_DATASOURCE_PASSWORD:}`。**部署时必须注入 `SPRING_DATASOURCE_URL` 与
+`SPRING_DATASOURCE_USERNAME`**，否则会落到占位符里的 localhost 默认值上。
 另外该仓**没有定义任何 profile 专属 yml**，也没有 `docker-compose`/`k8s` 清单；根 `Dockerfile` 用
 exec 形式 ENTRYPOINT，不经过 shell，所以 `JAVA_OPTS`、`SPRING_PROFILES_ACTIVE` 这类变量在那里不生效。
 
@@ -194,7 +196,7 @@ docker build -f Dockerfile -t z-meta:latest .
 docker build -f _frontend/Dockerfile -t z-meta-frontend:latest _frontend/
 ```
 
-nginx 侧把 `/meta` 反代到 `http://z-meta:8080`（见 [`_frontend/nginx.conf`](_frontend/nginx.conf)）。
+nginx 侧把 `/meta` 反代到 `http://z-meta:8080`（见 [`_frontend/z-meta-suit/nginx.conf`](_frontend/z-meta-suit/nginx.conf)）。
 
 两处**实测的脚本陈旧项**，用前要先改（本任务只改 README，不动脚本）：
 
@@ -221,7 +223,7 @@ nginx 侧把 `/meta` 反代到 `http://z-meta:8080`（见 [`_frontend/nginx.conf
 | 2026-09-06 | 从 z-opc monorepo 拆出独立仓（拆分记录见 `_doc/001_arch/01-module-structure.md`） |
 
 注意 [`_doc/001_arch/01-module-structure.md`](_doc/001_arch/01-module-structure.md) 仍写着
-"父项目 `../pom.xml`（com.zifang:z-opc）"、[`技术方案.md`](_doc/001_arch/技术方案.md) 写着
+"父项目 `../pom.xml`（com.zifang:z-opc）"、[`08-design.md`](_doc/001_arch/08-design.md) 写着
 "Spring Boot 3.x / Vite 8.x"：这些是**历史/规划文档**，与当前 pom 不符，以本 README 为准。
 
 ---
@@ -237,13 +239,14 @@ _Maintained by the z-opc-foundation organization._
 
 ## 文档目录
 
+- [`_doc/008_troubleshooting/`](_doc/008_troubleshooting/) — 踩坑与失败要点（控制台首页写死字面量实录）
 本项目文档统一收口在 `_doc/` 下：
 
 - [`_doc/001_arch/`](_doc/001_arch/) — 架构文档：
   - [`00-overview.md`](_doc/001_arch/00-overview.md) — 项目总览与愿景（含尚未实现的血缘/质量规划）
   - [`01-module-structure.md`](_doc/001_arch/01-module-structure.md) — 从 z-opc 拆分的历史记录（parent 描述已过时）
-  - [`技术方案.md`](_doc/001_arch/技术方案.md) — 技术方案（技术选型为规划口径，与 pom 实测不同）
-  - [`设计文档.md`](_doc/001_arch/设计文档.md) — 系统概述与能力设计
+  - [`08-design.md`](_doc/001_arch/08-design.md) — 技术方案（技术选型为规划口径，与 pom 实测不同）
+  - [`09-design.md`](_doc/001_arch/09-design.md) — 系统概述与能力设计
 
 - [`_doc/002_deploy/`](_doc/002_deploy/) — 部署 SQL：
   - [`init.sql`](_doc/002_deploy/init.sql) — 建表脚本，实测含 `z_tenant`、`z_application`、`z_dict_type`、
