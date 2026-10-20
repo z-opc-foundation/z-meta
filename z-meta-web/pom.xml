@@ -33,7 +33,7 @@
         </dependency>
         <!-- 2026-09-29 两格 groupId 由 com.zifang 换成 io.github.yuku123：com.zifang 那两条只存在于
              本机 ~/.m2（repo1 的 com/zifang 树 404），clean-room 里 z-meta-core 先红，这一格跟着红。
-             版本不写字面，由继承来的 z-boot-parent 1.0.21 的 ${z-boot.version} 下发；
+             版本不写字面，由继承来的 z-boot-parent 1.1.0 的 ${z-boot.version} 下发；
              jar 类集与旧 1.0.0-SNAPSHOT 快照逐类比过（本仓对 com.zifang.z.boot.* 的 import 只有
              MetaModuleDataSource 的 ModuleDataSourceTemplate，两坐标同名）。 -->
         <dependency>
