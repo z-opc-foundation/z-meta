@@ -83,10 +83,10 @@ Maven 发布，否则构建会去 nodejs.org 下 node（它的 dist 由 `_fronte
 | 持久层 | MyBatis-Plus 3.5.7 + Druid 1.2.23（均走 `z-boot-datasource-starter`，版本由父链下发） |
 | 数据库驱动 | `com.mysql:mysql-connector-j:8.0.33`（本仓按坐标显式钉，并整条抄回 Boot 的 `protobuf-java` exclusion，防被地板抬到 8.4.0） |
 | 其它显式钉版 | `org.yaml:snakeyaml:2.0`（地板不供这一条，不钉会静默落回 Boot 的 1.30） |
-| 组织内依赖 | `io.github.yuku123`: `z-boot-datasource-starter` / `z-boot-web-starter`（`${z-boot.version}`=1.0.21）、`z-util-core`（版本走 `z-boot-parent` 的兄弟仓权威表）、`z-meta-api` / `z-meta-core` |
+| 组织内依赖 | `io.github.yuku123`: `z-boot-datasource-starter` / `z-boot-web-starter`（`${z-boot.version}`=1.1.0）、`z-util-core`（版本走 `z-boot-parent` 的兄弟仓权威表）、`z-meta-api` / `z-meta-core` |
 | 返回体 / 文档 | `com.zifang.util.core.meta.Result`（z-util）· Knife4j `knife4j-openapi3-spring-boot-starter:4.1.0`（父链下发） |
 | 独立启动壳 | `spring-boot-starter-web` + `spring-boot-starter-log4j2`（admin 排除默认 Logback） |
-| 前端 | React 19 + antd 6 + react-router-dom 7 + axios，Vite 6 构建，pnpm workspace（`_frontend/`，非 Maven reactor） |
+| 前端 | React 19 + antd 6 + react-router-dom 7 + axios，Vite 6 构建，npm 工程（`_frontend/`，非 Maven reactor） |
 | 构建 / 发布 | Maven（`central` profile：central-publishing-maven-plugin 0.7.0 + source 3.3.0 + javadoc 3.11.2 + gpg 3.2.7）· Docker |
 
 ---
@@ -170,14 +170,16 @@ exec 形式 ENTRYPOINT，不经过 shell，所以 `JAVA_OPTS`、`SPRING_PROFILES
 
 ## 🧪 测试
 
-**本仓当前没有任何 `src/test` 目录**（`find . -type d -name test` 实测为空），所以：
+测试代码在 [`z-meta-core/src/test/java/com/zifang/z/meta/core/ReadmeClaimsTest.java`](z-meta-core/src/test/java/com/zifang/z/meta/core/ReadmeClaimsTest.java)
+—— README 主张自守卫：README 里每条定量主张（版本 / `<modules>` 条数与名单 / Controller 数与名单 /
+`FieldType` 枚举值个数 / 建表清单 / 端口 / 前端依赖版本）都跟源码重算值逐条对账，README 改数字即红。
 
 ```bash
-mvn test      # 通过，但一个用例也不跑
+mvn test      # 会跑上面那个守卫
 ```
 
-`z-meta-admin` 声明了 `spring-boot-starter-test` 却没有测试类；历史 README 承诺的
-"单元测试 / 集成测试 / `*PerformanceTest.java` 性能测试"在仓里没有对应文件，已删。
+`z-meta-admin` 声明了 `spring-boot-starter-test` 却没有测试类（它也不在 `<modules>` 里，不参与 reactor）；
+历史 README 承诺的"单元测试 / 集成测试 / `*PerformanceTest.java` 性能测试"在仓里没有对应文件，已删。
 手工验证按上面 standalone 步骤起服务后打 `GET /api/health`。
 
 ---
