@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, message, Modal, Popconfirm, Select, Space, Table} from 'antd';
+import {Button, Form, Input, message, Modal, Popconfirm, Select, Space} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import request from '../../services/request';
+import {ListTable} from '@yuku123/z-frontend-common/ui';
 
 const {Option} = Select;
 
@@ -153,18 +154,33 @@ function AppList() {
 
     return (
         <div>
-            <div style={{marginBottom: 16}}>
-                <Button type="primary" icon={<PlusOutlined/>} onClick={handleAdd}>
-                    新增应用
-                </Button>
-            </div>
-            <Table
+            {/* 服务端分页，不套客户端分页：
+                - 分页对象保留原样（current/pageSize/total 由后端驱动，翻页重查接口），
+                  只补 §2 规则 2 要求的 pageSizeOptions；
+                - 查询用基座 ListTable 自带的端侧过滤（后端 list 接口没有 keyword 参数，
+                  过滤只作用在当前页已加载的数据上）；
+                - 空态由基座 <EmptyState/> 承接。 */}
+            <ListTable
+                rows={data}
                 columns={columns}
-                dataSource={data}
                 loading={loading}
                 rowKey="id"
-                pagination={pagination}
+                searchKeys="appCode,appName,appType"
+                searchPlaceholder="按应用编码 / 名称 / 类型过滤"
+                cardExtra={
+                    <Button type="primary" icon={<PlusOutlined/>} onClick={handleAdd}>
+                        新增应用
+                    </Button>
+                }
+                pagination={{
+                    ...pagination,
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '50', '100'],
+                    showTotal: (total) => `共 ${total} 条`,
+                }}
                 onChange={handleTableChange}
+                emptyTitle="暂无应用"
+                emptyDescription="当前没有应用，先点右上角「新增应用」建一个。"
             />
             <Modal
                 title={editingRecord ? '编辑应用' : '新增应用'}

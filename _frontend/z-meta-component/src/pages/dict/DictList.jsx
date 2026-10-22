@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, message, Modal, Popconfirm, Select, Space, Table, Tabs} from 'antd';
+import {Button, Form, Input, message, Modal, Popconfirm, Select, Space, Tabs} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import request from '../../services/request';
+import {ListTable} from '@yuku123/z-frontend-common/ui';
 
 const {Option} = Select;
 const {TabPane} = Tabs;
@@ -195,34 +196,55 @@ function DictList() {
         <div>
             <Tabs defaultActiveKey="1">
                 <TabPane tab="字典类型" key="1">
-                    <div style={{marginBottom: 16}}>
-                        <Button type="primary" icon={<PlusOutlined/>} onClick={handleDictTypeAdd}>
-                            新增字典类型
-                        </Button>
-                    </div>
-                    <Table
+                    {/* 服务端分页，不套客户端分页：
+                        - 分页对象保留原样（current/pageSize/total 由后端驱动，翻页重查接口），
+                          只补 §2 规则 2 要求的 pageSizeOptions；
+                        - 查询用基座 ListTable 自带的端侧过滤（后端 list 接口没有 keyword 参数，
+                          过滤只作用在当前页已加载的数据上）；
+                        - 空态由基座 <EmptyState/> 承接。 */}
+                    <ListTable
+                        rows={dictTypeData}
                         columns={dictTypeColumns}
-                        dataSource={dictTypeData}
                         loading={dictTypeLoading}
                         rowKey="id"
+                        searchKeys="dictCode,dictName"
+                        searchPlaceholder="按字典编码 / 名称过滤"
+                        cardExtra={
+                            <Button type="primary" icon={<PlusOutlined/>} onClick={handleDictTypeAdd}>
+                                新增字典类型
+                            </Button>
+                        }
                         pagination={{
                             ...dictTypePagination,
+                            showSizeChanger: true,
+                            pageSizeOptions: ['10', '20', '50', '100'],
+                            showTotal: (total) => `共 ${total} 条`,
                             onChange: (page, pageSize) => fetchDictType(page, pageSize),
                         }}
+                        emptyTitle="暂无字典类型"
+                        emptyDescription="当前没有字典类型，先点右上角「新增字典类型」建一个。"
                     />
                 </TabPane>
                 <TabPane tab="字典项" key="2">
-                    <div style={{marginBottom: 16}}>
-                        <Button type="primary" icon={<PlusOutlined/>} onClick={handleDictItemAdd}>
-                            新增字典项
-                        </Button>
-                        {selectedDictId && <span style={{marginLeft: 16}}>当前字典ID: {selectedDictId}</span>}
-                    </div>
-                    <Table
+                    {/* 字典项是一次性拉全量（接口不带分页参数）⇒ 走基座默认的客户端分页，
+                        不再自己写 pagination。 */}
+                    <ListTable
+                        rows={dictItemData}
                         columns={dictItemColumns}
-                        dataSource={dictItemData}
                         loading={dictItemLoading}
                         rowKey="id"
+                        searchKeys="itemCode,itemName,itemValue"
+                        searchPlaceholder="按字典项编码 / 名称 / 值过滤"
+                        cardExtra={
+                            <Space>
+                                <Button type="primary" icon={<PlusOutlined/>} onClick={handleDictItemAdd}>
+                                    新增字典项
+                                </Button>
+                                {selectedDictId && <span>当前字典ID: {selectedDictId}</span>}
+                            </Space>
+                        }
+                        emptyTitle="暂无字典项"
+                        emptyDescription="先在「字典类型」里选一个类型，再新增字典项。"
                     />
                 </TabPane>
             </Tabs>
