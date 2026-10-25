@@ -33,7 +33,7 @@ function DictItems({dictCode}) {
             rowKey="id"
             loading={state.loading}
             dataSource={state.rows}
-            pagination={false}
+            pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: ['10', '20', '50', '100'], showTotal: (t) => `共 ${t} 条` }}
             columns={[
                 {title: '项编码', dataIndex: 'item_code', key: 'item_code', width: 180},
                 {title: '项名称', dataIndex: 'item_name', key: 'item_name'},

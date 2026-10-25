@@ -30,7 +30,7 @@ export default function BizModels() {
                         size="small"
                         rowKey={(f) => `${r.code}:${f.field_name}`}
                         dataSource={r.fields || []}
-                        pagination={false}
+                        pagination={false /* §2 规则 2 豁免：展开行子表：单个业务模型的字段明细，随父行联动，条数由该模型字段数决定；分页会把「父行 + 展开行」拆到两页，看不出字段属于哪个模型 */}
                         columns={[
                             {title: '字段名', dataIndex: 'name', key: 'name', width: 160},
                             {title: '属性', dataIndex: 'field_name', key: 'field_name', width: 200},
