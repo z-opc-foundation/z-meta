@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, message, Modal, Popconfirm, Select, Space, Tabs} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import request from '../../services/request';
-import {ListTable} from '@yuku123/z-frontend-common/ui';
+import {ErrorState, ListTable} from '@yuku123/z-frontend-common/ui';
 
 const {Option} = Select;
 const {TabPane} = Tabs;
@@ -15,6 +15,8 @@ function DictList() {
     const [dictTypeModalVisible, setDictTypeModalVisible] = useState(false);
     const [editingDictType, setEditingDictType] = useState(null);
     const [dictTypeForm] = Form.useForm();
+    // lead 008 §17：两栏各自常驻报错 + 重试，避免空表被误读成“没有字典”。
+    const [typeError, setTypeError] = useState(null);
 
     // 字典项状态
     const [dictItemData, setDictItemData] = useState([]);
@@ -23,6 +25,7 @@ function DictList() {
     const [dictItemModalVisible, setDictItemModalVisible] = useState(false);
     const [editingDictItem, setEditingDictItem] = useState(null);
     const [dictItemForm] = Form.useForm();
+    const [itemError, setItemError] = useState(null);
 
     // 获取字典类型列表
     const fetchDictType = async (page = 1, pageSize = 10) => {
@@ -37,8 +40,9 @@ function DictList() {
                 pageSize,
                 total: res.data.total || 0,
             });
+            setTypeError(null);
         } catch (error) {
-            message.error('获取字典类型失败');
+            setTypeError(error);
         } finally {
             setDictTypeLoading(false);
         }
@@ -52,8 +56,9 @@ function DictList() {
         try {
             const res = await request.get(`/dict/item/${dictId}`);
             setDictItemData(res.data || []);
+            setItemError(null);
         } catch (error) {
-            message.error('获取字典项失败');
+            setItemError(error);
         } finally {
             setDictItemLoading(false);
         }
@@ -202,6 +207,15 @@ function DictList() {
                         - 查询用基座 ListTable 自带的端侧过滤（后端 list 接口没有 keyword 参数，
                           过滤只作用在当前页已加载的数据上）；
                         - 空态由基座 <EmptyState/> 承接。 */}
+                    {typeError && (
+                        <ErrorState
+                            error={typeError}
+                            title="字典类型没有读到"
+                            description="接口没有返回数据，下方空表不代表真的没有字典类型。"
+                            onRetry={() => fetchDictType(dictTypePagination.current, dictTypePagination.pageSize)}
+                            style={{marginBottom: 16}}
+                        />
+                    )}
                     <ListTable
                         rows={dictTypeData}
                         columns={dictTypeColumns}
@@ -221,13 +235,22 @@ function DictList() {
                             showTotal: (total) => `共 ${total} 条`,
                             onChange: (page, pageSize) => fetchDictType(page, pageSize),
                         }}
-                        emptyTitle="暂无字典类型"
-                        emptyDescription="当前没有字典类型，先点右上角「新增字典类型」建一个。"
+                        emptyTitle={typeError ? '数据没有读到' : '暂无字典类型'}
+                        emptyDescription={typeError ? '上方错误条已说明原因，点「重新加载」重试。' : '当前没有字典类型，先点右上角「新增字典类型」建一个。'}
                     />
                 </TabPane>
                 <TabPane tab="字典项" key="2">
                     {/* 字典项是一次性拉全量（接口不带分页参数）⇒ 走基座默认的客户端分页，
                         不再自己写 pagination。 */}
+                    {itemError && (
+                        <ErrorState
+                            error={itemError}
+                            title="字典项没有读到"
+                            description="接口没有返回数据，下方空表不代表真的没有字典项。"
+                            onRetry={() => selectedDictId && fetchDictItem(selectedDictId)}
+                            style={{marginBottom: 16}}
+                        />
+                    )}
                     <ListTable
                         rows={dictItemData}
                         columns={dictItemColumns}
@@ -243,8 +266,8 @@ function DictList() {
                                 {selectedDictId && <span>当前字典ID: {selectedDictId}</span>}
                             </Space>
                         }
-                        emptyTitle="暂无字典项"
-                        emptyDescription="先在「字典类型」里选一个类型，再新增字典项。"
+                        emptyTitle={itemError ? '数据没有读到' : '暂无字典项'}
+                        emptyDescription={itemError ? '上方错误条已说明原因，点「重新加载」重试。' : '先在「字典类型」里选一个类型，再新增字典项。'}
                     />
                 </TabPane>
             </Tabs>

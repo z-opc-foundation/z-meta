@@ -19,7 +19,7 @@ export const appMeta = { title: 'z-meta 元数据平台', short: 'z-meta' }
 
 export const menuItems = [
     { key: '/z-meta/home', label: '首页', icon: <HomeOutlined /> },
-    { key: '/z-meta/dashboard', label: '首页', icon: <DashboardOutlined /> },
+    { key: '/z-meta/dashboard', label: '概览', icon: <DashboardOutlined /> },
     { key: '/z-meta/tenant', label: '租户管理', icon: <UserOutlined /> },
     { key: '/z-meta/app', label: '应用管理', icon: <AppstoreOutlined /> },
     { key: '/z-meta/dict', label: '字典管理', icon: <BookOutlined /> },

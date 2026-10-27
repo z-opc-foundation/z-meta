@@ -2,13 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, message, Modal, Popconfirm, Select, Space} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import request from '../../services/request';
-import {ListTable} from '@yuku123/z-frontend-common/ui';
+import {ErrorState, ListTable} from '@yuku123/z-frontend-common/ui';
 
 const {Option} = Select;
 
 function ApiList() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    // lead 008 §17：读失败常驻报错 + 重试，避免空表被误读成“没有数据”。
+    const [loadError, setLoadError] = useState(null);
     const [pagination, setPagination] = useState({current: 1, pageSize: 10, total: 0});
     const [modalVisible, setModalVisible] = useState(false);
     const [editingRecord, setEditingRecord] = useState(null);
@@ -26,8 +28,9 @@ function ApiList() {
                 pageSize,
                 total: res.data.total || 0,
             });
+            setLoadError(null);
         } catch (error) {
-            message.error('获取数据失败');
+            setLoadError(error);
         } finally {
             setLoading(false);
         }
@@ -179,6 +182,15 @@ function ApiList() {
                 - 查询用基座 ListTable 自带的端侧过滤（后端 list 接口没有 keyword 参数，
                   过滤只作用在当前页已加载的数据上）；
                 - 空态由基座 <EmptyState/> 承接。 */}
+            {loadError && (
+                <ErrorState
+                    error={loadError}
+                    title="接口列表没有读到"
+                    description="接口没有返回数据，下方空表不代表真的没有数据。"
+                    onRetry={() => fetchData(pagination.current, pagination.pageSize)}
+                    style={{marginBottom: 16}}
+                />
+            )}
             <ListTable
                 rows={data}
                 columns={columns}
@@ -198,8 +210,8 @@ function ApiList() {
                     showTotal: (total) => `共 ${total} 条`,
                 }}
                 onChange={handleTableChange}
-                emptyTitle="暂无接口"
-                emptyDescription="当前没有接口定义，先点右上角「新增接口」建一个。"
+                emptyTitle={loadError ? '数据没有读到' : '暂无接口'}
+                emptyDescription={loadError ? '上方错误条已说明原因，点「重新加载」重试。' : '当前没有接口定义，先点右上角「新增接口」建一个。'}
             />
             <Modal
                 title={editingRecord ? '编辑接口' : '新增接口'}
