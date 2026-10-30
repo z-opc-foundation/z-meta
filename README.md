@@ -20,7 +20,7 @@
 | **Maven Central** | 已发布（repo1 实测 200）：`z-meta` / `z-meta-api` / `z-meta-core` / `z-meta-web` 的 `1.0.0` pom 与 jar 均可拉取；`z-meta-admin`、`z-meta-frontend` 为 404（不在 reactor，不发布）；旧 `com.zifang` namespace 整树 404 |
 | **默认端口** | `8080`（**仓内没有任何 yml 设置 `server.port`**，取 Spring Boot 默认值；`Dockerfile` 亦 `EXPOSE 8080`，运维脚本映射宿主机 `8094`） |
 | **context-path** | 仓内未设置；前端、nginx、vite 代理都按 `/meta` 前缀对接，需运行时注入 `--server.servlet.context-path=/meta` |
-| **运行口径** | Java 8（根 POM `<compile.version>8</compile.version>`）· Spring Boot 2.7.18 |
+| **运行口径** | Java 17（根 POM `<compile.version>17</compile.version>`）· Spring Boot 3.3.13 |
 | **最近更新** | 2026-09-30 |
 
 ---
@@ -78,7 +78,7 @@ Maven 发布，否则构建会去 nodejs.org 下 node（它的 dist 由 `_fronte
 
 | 层级 | 技术（版本口径均来自 pom 实测） |
 |------|--------------------------------|
-| 语言 / 运行时 | Java 8（`compile.version=8`；`z-boot-parent` 下发 1.8 口径） |
+| 语言 / 运行时 | Java 17（`compile.version=17`；`z-boot-parent` 1.2.0 下发 17 口径） |
 | 框架 | Spring Boot 2.7.18（由 `z-boot-parent` 自带地板供，本仓不再 import Boot BOM） |
 | 持久层 | MyBatis-Plus 3.5.7 + Druid 1.2.23（均走 `z-boot-datasource-starter`，版本由父链下发） |
 | 数据库驱动 | `com.mysql:mysql-connector-j:8.0.33`（本仓按坐标显式钉，并整条抄回 Boot 的 `protobuf-java` exclusion，防被地板抬到 8.4.0） |

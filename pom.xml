@@ -113,9 +113,9 @@
                      命中的只有 mysql-connector-j 一条，已在下面按坐标整条补回（见那条注释）。
 
              必须留着的一类：
-               compile.version=8 —— 父链根本不供这个键名（preflight 归到"父链没供给、必须自己留着"），
+               compile.version=17 —— 父链根本不供这个键名（preflight 归到"父链没供给、必须自己留着"），
                      本仓 compiler 的 <source>/<target> 引用它；z-config/z-rpc 迁移后同样留着这一格。 -->
-        <compile.version>8</compile.version>
+        <compile.version>17</compile.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -231,7 +231,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <!-- 版本键名沿用父链的 maven-compiler-plugin.version（地板发布件 = 3.11.0，与本仓迁移前
                      写的字面量逐字相同；两侧日志都是 compiler:3.11.0:compile）。
-                     <source>/<target> 继续写 ${compile.version}=8（父链不供那个键，见上面 properties 注释）。
+                     <source>/<target> 继续写 ${compile.version}=17（父链不供那个键，见上面 properties 注释）。
                      ⚠ 父链那份 <configuration> 的 <compilerArgs>-parameters</compilerArgs> 是**合并**进来的，
                      这一层挡不住（z-gw 试点实测：MethodParameters 属性会变，major 仍是 52）⇒ 迁移后
                      本仓 class 的 major 逐根比过，见迁移报告。 -->
