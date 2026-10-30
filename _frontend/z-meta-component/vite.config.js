@@ -1,9 +1,10 @@
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import {safeEmptyOutDir} from '../../build-tools/safe-vite-plugin.mjs'
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [safeEmptyOutDir(), react()],
     resolve: {
         // src/pages/*.jsx 用 @/common/components/ui 引本仓内部模块。
         // library mode 的 rollup 不读 tsconfig 的 paths，alias 必须配在这里，否则解析不了直接构建失败。
@@ -19,7 +20,7 @@ export default defineConfig({
             formats: ['es'],
         },
         outDir: 'dist',
-        emptyOutDir: true,
+        emptyOutDir: false,
         rollupOptions: {
             // rollup 的 external 是精确字符串匹配，不是前缀匹配：
             // 只写主桶的话，源码里的 '@yuku123/z-frontend-common/ui' 会被当普通依赖打包，
