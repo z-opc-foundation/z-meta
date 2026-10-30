@@ -10,7 +10,7 @@
     </parent>
     <artifactId>z-meta-api</artifactId>
 
-    <name>z-meta-api</name>
+    <name>z-meta :: api</name>
     <description>元数据平台注解 API：@BizModel / @BizField，零实现零依赖，供业务侧声明模型元数据</description>
     <packaging>jar</packaging>
 </project>

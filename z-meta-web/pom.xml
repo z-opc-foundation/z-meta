@@ -11,7 +11,7 @@
 
     <artifactId>z-meta-web</artifactId>
 
-    <name>z-meta-web</name>
+    <name>z-meta :: web</name>
     <description>业务模型可视化中心 - web 模块：DictController + MetaApplicationController + MetaTenantController +
         ApiController + PrivateConfigController + BizModelController + HealthController (供 main-starter embed)
     </description>

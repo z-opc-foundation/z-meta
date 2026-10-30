@@ -57,10 +57,11 @@
          ——逐条都是把 parent 链拼进路径的假地址。旧 parent（com.zifang:z-opc）只供 name/description/licenses，
          没有 url/developers/scm，所以这一层以前根本不会被读到。写法照 z-mist/pom.xml:42-68（同一 org、
          url 与本仓 `git remote get-url origin` 实测一致）。 -->
-    <name>z-meta (Metadata Platform Aggregator)</name>
+    <name>z-meta :: root</name>
     <description>
         Z-Meta: 元数据管理平台。数据库元数据 + API 元数据集中管理，含数据源动态配置、
         业务模型注解采集（@BizModel/@BizField）与模块/租户/字典管理。
+        Metadata Platform Aggregator
     </description>
     <url>https://github.com/z-opc-foundation/z-meta</url>
     <developers>
