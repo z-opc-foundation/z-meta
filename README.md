@@ -15,9 +15,9 @@
 |------|-----|
 | **仓库** | `z-meta` |
 | **Maven 坐标** | `io.github.yuku123:z-meta`（根聚合 POM，`<packaging>pom</packaging>`） |
-| **当前版本** | `1.0.0`（根 POM 写字面 `<version>1.0.0</version>`，**不是** `${revision}`；flatten-maven-plugin 1.5.0 + `oss` 模式常开） |
+| **当前版本** | `1.0.1`（根 POM 写字面 `<version>1.0.1</version>`，**不是** `${revision}`；flatten-maven-plugin 1.5.0 + `oss` 模式常开） |
 | **父项目** | `io.github.yuku123:z-boot-parent:1.2.2`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘） |
-| **Maven Central** | 已发布（repo1 实测 200）：`z-meta` / `z-meta-api` / `z-meta-core` / `z-meta-web` 的 `1.0.0` pom 与 jar 均可拉取；`z-meta-admin`、`z-meta-frontend` 为 404（不在 reactor，不发布）；旧 `com.zifang` namespace 整树 404 |
+| **Maven Central** | `1.0.0` 已发布（repo1 实测 200）；**2026-11-06 修复版 `1.0.1` 重新发布**；`z-meta-admin`、`z-meta-frontend` 为 404（不在 reactor，不发布）；旧 `com.zifang` namespace 整树 404 |
 | **默认端口** | `8080`（**仓内没有任何 yml 设置 `server.port`**，取 Spring Boot 默认值；`Dockerfile` 亦 `EXPOSE 8080`，运维脚本映射宿主机 `8094`） |
 | **context-path** | 仓内未设置；前端、nginx、vite 代理都按 `/meta` 前缀对接，需运行时注入 `--server.servlet.context-path=/meta` |
 | **运行口径** | Java 17（根 POM `<compile.version>17</compile.version>`）· Spring Boot 3.3.13 |
@@ -50,7 +50,7 @@
 
 ```
 z-meta/
-├── pom.xml                # 根聚合 POM：继承 z-boot-parent:1.2.2，version 1.0.0
+├── pom.xml                # 根聚合 POM：继承 z-boot-parent:1.2.2，version 1.0.1
 ├── Dockerfile             # 后端镜像（eclipse-temurin:8-jdk，EXPOSE 8080）
 ├── LICENSE                # MIT，Copyright (c) 2026 z-opc-foundation
 ├── README.md              # 本文档
@@ -114,7 +114,7 @@ mvn clean install -DskipTests
 mvn -f z-meta-admin/pom.xml clean package -DskipTests
 
 # 3) 起服务：repackage 带 <classifier>exec</classifier>，可执行的是 -exec 那一只
-java -jar z-meta-admin/target/z-meta-admin-1.0.0-exec.jar \
+java -jar z-meta-admin/target/z-meta-admin-1.0.1-exec.jar \
   --server.port=18086 \
   --server.servlet.context-path=/meta \
   --z.meta.standalone=true
@@ -202,8 +202,8 @@ nginx 侧把 `/meta` 反代到 `http://z-meta:8080`（见 [`_frontend/z-meta-sui
 
 两处**实测的脚本陈旧项**，用前要先改（本任务只改 README，不动脚本）：
 
-- 根 [`Dockerfile`](Dockerfile) 的 `COPY` 仍指向 `z-meta-admin/target/z-meta-admin-1.0.0-SNAPSHOT.jar`，
-  而坐标已换成 `1.0.0` 且可执行件带 `exec` classifier → 现状会 COPY 失败。
+- 根 [`Dockerfile`](Dockerfile) 的 `COPY` 仍指向 `z-meta-admin/target/z-meta-admin-1.0.1-SNAPSHOT.jar`，
+  而坐标已换成 `1.0.1` 且可执行件带 `exec` classifier → 现状会 COPY 失败。
 - [`_doc/003_script/package.sh`](_doc/003_script/package.sh) 仍在 `cd z-meta-admin-frontend`，
   该目录已不存在（前端现在是 `_frontend/`）。
 
@@ -218,10 +218,10 @@ nginx 侧把 `/meta` 反代到 `http://z-meta:8080`（见 [`_frontend/z-meta-sui
 
 | 日期 | 变更 |
 |------|------|
-| 2026-09-30 | `release:` groupId `com.zifang` → `io.github.yuku123`、版本 `1.0.0-SNAPSHOT` → `1.0.0`，补 `central` / `central-dryrun` 发布 profile；四件已上 repo1 |
+| 2026-09-30 | `release:` groupId `com.zifang` → `io.github.yuku123`、版本 `1.0.1-SNAPSHOT` → `1.0.1`，补 `central` / `central-dryrun` 发布 profile；四件已上 repo1 |
 | 2026-09-30 | 三处 `com.zifang:z-boot-*-starter` 依赖换到 `io.github.yuku123` 发布坐标（clean-room 可构建） |
 | 2026-09-29 | 消费入口抬到 `z-boot-parent:1.0.21`（消费者轮） |
-| 2026-09-29 | 消费入口从幻影 parent `com.zifang:z-opc:1.0.0-SNAPSHOT`（`relativePath ../pom.xml`）换成 repo1 上的 `z-boot-parent` |
+| 2026-09-29 | 消费入口从幻影 parent `com.zifang:z-opc:1.0.1-SNAPSHOT`（`relativePath ../pom.xml`）换成 repo1 上的 `z-boot-parent` |
 | 2026-09-06 | 从 z-opc monorepo 拆出独立仓（拆分记录见 `_doc/001_arch/01-module-structure.md`） |
 
 注意 [`_doc/001_arch/01-module-structure.md`](_doc/001_arch/01-module-structure.md) 仍写着
