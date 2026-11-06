@@ -202,7 +202,7 @@ nginx 侧把 `/meta` 反代到 `http://z-meta:8080`（见 [`_frontend/z-meta-sui
 
 两处**实测的脚本陈旧项**，用前要先改（本任务只改 README，不动脚本）：
 
-- 根 [`Dockerfile`](Dockerfile) 的 `COPY` 仍指向 `z-meta-admin/target/z-meta-admin-1.0.1-SNAPSHOT.jar`，
+- 根 [`Dockerfile`](Dockerfile) 的 `COPY` 仍指向 `z-meta-admin/target/z-meta-admin-1.0.0-SNAPSHOT.jar`，
   而坐标已换成 `1.0.1` 且可执行件带 `exec` classifier → 现状会 COPY 失败。
 - [`_doc/003_script/package.sh`](_doc/003_script/package.sh) 仍在 `cd z-meta-admin-frontend`，
   该目录已不存在（前端现在是 `_frontend/`）。
