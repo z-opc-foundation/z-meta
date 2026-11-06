@@ -16,7 +16,7 @@
 | **仓库** | `z-meta` |
 | **Maven 坐标** | `io.github.yuku123:z-meta`（根聚合 POM，`<packaging>pom</packaging>`） |
 | **当前版本** | `1.0.0`（根 POM 写字面 `<version>1.0.0</version>`，**不是** `${revision}`；flatten-maven-plugin 1.5.0 + `oss` 模式常开） |
-| **父项目** | `io.github.yuku123:z-boot-parent:1.2.1`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘） |
+| **父项目** | `io.github.yuku123:z-boot-parent:1.2.2`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘） |
 | **Maven Central** | 已发布（repo1 实测 200）：`z-meta` / `z-meta-api` / `z-meta-core` / `z-meta-web` 的 `1.0.0` pom 与 jar 均可拉取；`z-meta-admin`、`z-meta-frontend` 为 404（不在 reactor，不发布）；旧 `com.zifang` namespace 整树 404 |
 | **默认端口** | `8080`（**仓内没有任何 yml 设置 `server.port`**，取 Spring Boot 默认值；`Dockerfile` 亦 `EXPOSE 8080`，运维脚本映射宿主机 `8094`） |
 | **context-path** | 仓内未设置；前端、nginx、vite 代理都按 `/meta` 前缀对接，需运行时注入 `--server.servlet.context-path=/meta` |
@@ -50,7 +50,7 @@
 
 ```
 z-meta/
-├── pom.xml                # 根聚合 POM：继承 z-boot-parent:1.2.1，version 1.0.0
+├── pom.xml                # 根聚合 POM：继承 z-boot-parent:1.2.2，version 1.0.0
 ├── Dockerfile             # 后端镜像（eclipse-temurin:8-jdk，EXPOSE 8080）
 ├── LICENSE                # MIT，Copyright (c) 2026 z-opc-foundation
 ├── README.md              # 本文档
@@ -78,7 +78,7 @@ Maven 发布，否则构建会去 nodejs.org 下 node（它的 dist 由 `_fronte
 
 | 层级 | 技术（版本口径均来自 pom 实测） |
 |------|--------------------------------|
-| 语言 / 运行时 | Java 17（`compile.version=17`；`z-boot-parent` 1.2.1 下发 17 口径） |
+| 语言 / 运行时 | Java 17（`compile.version=17`；`z-boot-parent` 1.2.2 下发 17 口径） |
 | 框架 | Spring Boot 2.7.18（由 `z-boot-parent` 自带地板供，本仓不再 import Boot BOM） |
 | 持久层 | MyBatis-Plus 3.5.7 + Druid 1.2.23（均走 `z-boot-datasource-starter`，版本由父链下发） |
 | 数据库驱动 | `com.mysql:mysql-connector-j:8.0.33`（本仓按坐标显式钉，并整条抄回 Boot 的 `protobuf-java` exclusion，防被地板抬到 8.4.0） |
@@ -99,9 +99,9 @@ Maven 发布，否则构建会去 nodejs.org 下 node（它的 dist 由 `_fronte
 mvn clean install -DskipTests
 ```
 
-本仓**自包含**：parent 是 repo1 上的 `io.github.yuku123:z-boot-parent:1.2.1`，`<relativePath/>` 留空，
+本仓**自包含**：parent 是 repo1 上的 `io.github.yuku123:z-boot-parent:1.2.2`，`<relativePath/>` 留空，
 不需要任何"父项目目录"，也不需要 monorepo 时代的 `../pom.xml`。只要本机能解析到那条 parent 就能构建。
-第三方版本一律由 `z-boot-parent:1.2.1` 供给（第三方地板与兄弟仓权威表均已并入 parent 自身），
+第三方版本一律由 `z-boot-parent:1.2.2` 供给（第三方地板与兄弟仓权威表均已并入 parent 自身），
 模块 POM 里不应再出现字面版本钉。
 
 ### standalone 跑 admin
