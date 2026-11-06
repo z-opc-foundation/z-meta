@@ -1,5 +1,11 @@
-# 基础镜像：Eclipse Temurin 8 JDK（支持amd64/arm64架构，M系列Mac可用）
-FROM eclipse-temurin:8-jdk
+# 基础镜像：Eclipse Temurin 17 JDK（支持amd64/arm64架构，M系列Mac可用）
+#
+# ⚠ 2026-11-06 底镜像 Java 8 → 17（Boot3 迁移遗留修）：
+#   z-meta 已随 Boot3 火车迁到 JDK17（父 pom = z-boot-parent ⇒ class major 61），
+#   而底镜像还停在 8-jdk ⇒ 容器起来即 UnsupportedClassVersionError
+#   (class file version 61.0, this version only recognizes up to 52.0) ⇒ **崩溃循环**。
+#   ⇒ 运行时底镜像必须与产物 class major 同一档（17）。
+FROM eclipse-temurin:17-jdk
 
 # 维护者信息
 LABEL maintainer="zifang"
