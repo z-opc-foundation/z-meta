@@ -11,6 +11,7 @@ import java.util.Date;
  * 接口实体
  */
 @TableName("z_api")
+@com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 public class ZApiDO implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -11,6 +11,7 @@ import java.util.Date;
  * 字典项实体
  */
 @TableName("z_dict_item")
+@com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 public class ZDictItemDO implements Serializable {
 
     private static final long serialVersionUID = 1L;

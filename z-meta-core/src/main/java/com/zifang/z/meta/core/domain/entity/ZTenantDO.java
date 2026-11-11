@@ -11,6 +11,7 @@ import java.util.Date;
  * 租户实体
  */
 @TableName("z_tenant")
+@com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 public class ZTenantDO implements Serializable {
 
     private static final long serialVersionUID = 1L;

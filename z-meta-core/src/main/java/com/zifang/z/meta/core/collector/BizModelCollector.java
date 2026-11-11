@@ -75,6 +75,7 @@ public class BizModelCollector {
         return result;
     }
 
+    @com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCamelCaseStrategy.class)
     public static class BizModelDTO {
         private String code;
         private String name;
@@ -132,6 +133,7 @@ public class BizModelCollector {
         }
     }
 
+    @com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCamelCaseStrategy.class)
     public static class BizFieldDTO {
         private String name;
         private String fieldName;

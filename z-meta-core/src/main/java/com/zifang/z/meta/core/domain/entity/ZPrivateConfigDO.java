@@ -11,6 +11,7 @@ import java.util.Date;
  * 私有配置实体 — 特殊 KV 配置
  */
 @TableName("z_private_config")
+@com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 public class ZPrivateConfigDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
