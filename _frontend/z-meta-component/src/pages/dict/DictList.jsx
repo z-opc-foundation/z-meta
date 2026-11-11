@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, message, Modal, Popconfirm, Select, Space, Tabs} from 'antd';
-import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {PlusOutlined} from '@ant-design/icons';
 import request from '../../services/request';
 import {ErrorState, ListTable} from '@yuku123/z-frontend-common/ui';
 
@@ -166,10 +166,10 @@ function DictList() {
             key: 'action',
             render: (_, record) => (
                 <Space>
-                    <Button type="link" onClick={() => fetchDictItem(record.id)}>查看项</Button>
-                    <Button type="link" icon={<EditOutlined/>} onClick={() => handleDictTypeEdit(record)}>编辑</Button>
+                    <Button type="link" size="small" onClick={() => fetchDictItem(record.id)}>查看项</Button>
+                    <Button type="link" size="small" onClick={() => handleDictTypeEdit(record)}>编辑</Button>
                     <Popconfirm title="确定删除?" onConfirm={() => handleDictTypeDelete(record.id)}>
-                        <Button type="link" danger icon={<DeleteOutlined/>}>删除</Button>
+                        <Button type="link" size="small" danger>删除</Button>
                     </Popconfirm>
                 </Space>
             ),
@@ -188,9 +188,9 @@ function DictList() {
             key: 'action',
             render: (_, record) => (
                 <Space>
-                    <Button type="link" icon={<EditOutlined/>} onClick={() => handleDictItemEdit(record)}>编辑</Button>
+                    <Button type="link" size="small" onClick={() => handleDictItemEdit(record)}>编辑</Button>
                     <Popconfirm title="确定删除?" onConfirm={() => handleDictItemDelete(record.id)}>
-                        <Button type="link" danger icon={<DeleteOutlined/>}>删除</Button>
+                        <Button type="link" size="small" danger>删除</Button>
                     </Popconfirm>
                 </Space>
             ),

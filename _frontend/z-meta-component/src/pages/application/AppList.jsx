@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, message, Modal, Popconfirm, Select, Space} from 'antd';
-import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {PlusOutlined} from '@ant-design/icons';
 import request from '../../services/request';
 import {ErrorState, ListTable} from '@yuku123/z-frontend-common/ui';
 
@@ -142,11 +142,11 @@ function AppList() {
             key: 'action',
             render: (_, record) => (
                 <Space>
-                    <Button type="link" icon={<EditOutlined/>} onClick={() => handleEdit(record)}>
+                    <Button type="link" size="small" onClick={() => handleEdit(record)}>
                         编辑
                     </Button>
                     <Popconfirm title="确定删除?" onConfirm={() => handleDelete(record.id)}>
-                        <Button type="link" danger icon={<DeleteOutlined/>}>
+                        <Button type="link" size="small" danger>
                             删除
                         </Button>
                     </Popconfirm>
