@@ -17,12 +17,12 @@
     <parent>
         <groupId>io.github.yuku123</groupId>
         <artifactId>z-boot-parent</artifactId>
-        <version>1.2.3</version>
+        <version>1.2.4</version>
         <relativePath/>
     </parent>
 
     <!-- 这两行以前没有：groupId/version 都是从 com.zifang:z-opc:1.0.0-SNAPSHOT 那条 parent 继承的。
-         换 parent 后继承来的就是 io.github.yuku123:z-boot-parent:1.0.19 ⇒ 不写字面自家的话，本仓坐标会变成
+         换 parent 后继承来的就是 io.github.yuku123:z-boot-parent:1.2.4 ⇒ 不写字面自家的话，本仓坐标会变成
          io.github.yuku123:z-boot-parent 那一格，而 4 个子 pom 的 parent 全写死自家坐标，当场读不动。
          迁移那一轮只做"把隐式坐标改成显式、逐字同值"，groupId/版本都不动（换 namespace 记在迁移报告的
          "拒绝裁定"里）。2026-09-30 CEO 裁定"上到中央仓库"，这一刀现在做完：
