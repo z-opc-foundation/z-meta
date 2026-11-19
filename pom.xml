@@ -88,6 +88,10 @@
         <module>z-meta-api</module>
         <module>z-meta-core</module>
         <module>z-meta-web</module>
+        <!-- 仓库自述 starter: 任何仓引这一件即自带 /api/meta/repo/** 一组端点。
+             零 DB 依赖 (不引 z-meta-core), 不要求数据源, 不写库。
+             版本与同族对齐 (${project.version}) ⇒ 消费方的 z-meta.version 属性不用动。 -->
+        <module>z-meta-starter</module>
         <!-- z-meta-admin 已废弃: controllers + AutoConfiguration 全迁到 z-meta-web.
              保留 z-meta-admin 源码目录仅作历史参考, 不参与构建以避免 application.yml 污染 main-starter.
              如需 standalone admin, 请独立启动 z-meta-admin 并用 server.port=18086 覆盖. -->
@@ -146,6 +150,13 @@
             <dependency>
                 <groupId>io.github.yuku123</groupId>
                 <artifactId>z-meta-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- 仓库自述 starter: 消费方引这一件即得 /api/meta/repo/** 一组端点。
+                 与同族对齐版本 ⇒ 消费方沿用既有 z-meta.version 属性, 无需新增版本维度。 -->
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-meta-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.yuku123</groupId>
+        <artifactId>z-meta</artifactId>
+        <version>1.0.2</version>
+    </parent>
+
+    <artifactId>z-meta-starter</artifactId>
+
+    <name>z-meta :: starter</name>
+    <description>
+        仓库自述 starter —— 任何仓只要引这一件, 启动后即自带 /api/meta/repo/** 一组
+        「本仓信息」端点: 本仓有哪些 @BizApi 端点、哪些 @BizModel 数据模型、
+        构建与运行时身份 (坐标/版本/git commit/JVM/端口/启动时间)。
+        零 DB 依赖 —— 不引 z-meta-core, 不要求数据源, 不写库。
+    </description>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- 注解本体: @BizApi/@BizParam/@BizModel/@BizField/@BizMethod/@BizCause。
+             本模块只读它们的元数据, 不实现它们。 -->
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-meta-api</artifactId>
+        </dependency>
+
+        <!-- Result<T> 统一响应外壳 (全仓口径)。 -->
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-util-core</artifactId>
+        </dependency>
+
+        <!-- 自动装配: @AutoConfiguration + AutoConfiguration.imports (Boot 2.7/3.x 通用写法)。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
