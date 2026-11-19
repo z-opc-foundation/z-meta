@@ -6,14 +6,14 @@
     <parent>
         <groupId>io.github.yuku123</groupId>
         <artifactId>z-meta</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
 
     <artifactId>z-meta-web</artifactId>
 
     <name>z-meta :: web</name>
     <description>业务模型可视化中心 - web 模块：DictController + MetaApplicationController + MetaTenantController +
-        ApiController + PrivateConfigController + BizModelController + HealthController (供 main-starter embed)
+        ApiController + PrivateConfigController + BizModelController + MetaDocumentController + HealthController (供 main-starter embed)
     </description>
 
     <properties>
@@ -50,6 +50,16 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-meta-api</artifactId>
+            <version>${z-meta.version}</version>
         </dependency>
     </dependencies>
 

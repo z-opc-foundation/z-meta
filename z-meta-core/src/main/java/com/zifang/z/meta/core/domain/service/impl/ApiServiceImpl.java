@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.meta.core.domain.entity.ZApiDO;
 import com.zifang.z.meta.core.domain.mapper.ZApiMapper;
 import com.zifang.z.meta.core.domain.service.IApiService;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ApiServiceImpl extends ServiceImpl<ZApiMapper, ZApiDO> implements IApiService {
 
     @Override
+    @BizMethod(name = "pageApi", module = "z-meta", description = "", operation = BizMethod.Operation.QUERY)
     public IPage<ZApiDO> pageApi(Page<ZApiDO> page, ZApiDO api) {
         LambdaQueryWrapper<ZApiDO> wrapper = new LambdaQueryWrapper<>();
         if (api != null) {
@@ -46,9 +48,11 @@ public class ApiServiceImpl extends ServiceImpl<ZApiMapper, ZApiDO> implements I
     }
 
     @Override
+    @BizMethod(name = "listByAppId", module = "z-meta", description = "", operation = BizMethod.Operation.QUERY)
     public List<ZApiDO> listByAppId(Long appId) {
         return list(new LambdaQueryWrapper<ZApiDO>()
                 .eq(ZApiDO::getAppId, appId)
                 .orderByDesc(ZApiDO::getGmtCreate));
     }
 }
+

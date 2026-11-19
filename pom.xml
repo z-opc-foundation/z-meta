@@ -37,7 +37,7 @@
 
     <groupId>io.github.yuku123</groupId>
     <artifactId>z-meta</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>pom</packaging>
 
     <licenses>
@@ -97,6 +97,7 @@
         <!-- <module>_frontend</module> -->
     </modules>
     <properties>
+        <z-meta.version>1.0.2</z-meta.version>
         <!-- 迁移删掉的键（逐条按**坐标**对过 parent_preflight 第 2 节 + 两侧 dependency:tree 实测）：
                maven.compiler.source / maven.compiler.target / project.build.sourceEncoding
                    → 父链 z-boot-parent 的 properties 就是 8 / 8 / UTF-8，逐字同值（旧 parent 供的是

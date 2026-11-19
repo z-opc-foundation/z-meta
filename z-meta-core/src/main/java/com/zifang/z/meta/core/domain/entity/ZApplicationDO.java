@@ -3,6 +3,8 @@ package com.zifang.z.meta.core.domain.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizModel;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,6 +12,7 @@ import java.util.Date;
 /**
  * 应用实体
  */
+@BizModel(name = "应用实体", module = "z-meta", description = "应用实体")
 @TableName("z_application")
 @com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 public class ZApplicationDO implements Serializable {
@@ -17,16 +20,27 @@ public class ZApplicationDO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.AUTO)
+    @BizField(name = "主键", type = BizField.FieldType.INTEGER)
     private Long id;
+    @BizField(name = "租户ID", type = BizField.FieldType.INTEGER)
     private Long tenantId;
+    @BizField(name = "应用编码", type = BizField.FieldType.STRING)
     private String appCode;
+    @BizField(name = "应用名称", type = BizField.FieldType.STRING)
     private String appName;
+    @BizField(name = "应用类型（web/api/mobile/miniapp）", type = BizField.FieldType.STRING)
     private String appType;
+    @BizField(name = "描述", type = BizField.FieldType.STRING)
     private String description;
+    @BizField(name = "基础URL", type = BizField.FieldType.STRING)
     private String baseUrl;
+    @BizField(name = "状态", type = BizField.FieldType.INTEGER)
     private Integer status;
+    @BizField(name = "负责人", type = BizField.FieldType.STRING)
     private String owner;
+    @BizField(name = "创建时间", type = BizField.FieldType.DATETIME)
     private Date gmtCreate;
+    @BizField(name = "修改时间", type = BizField.FieldType.DATETIME)
     private Date gmtModified;
 
     public Long getId() {
@@ -117,3 +131,4 @@ public class ZApplicationDO implements Serializable {
         this.gmtModified = gmtModified;
     }
 }
+

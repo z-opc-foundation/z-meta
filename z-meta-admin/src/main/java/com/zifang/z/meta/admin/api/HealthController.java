@@ -2,6 +2,7 @@ package com.zifang.z.meta.admin.api;
 
 import com.zifang.util.core.meta.Result;
 import com.zifang.util.core.meta.ResultCode;
+import com.zifang.z.meta.api.annotation.BizApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +33,9 @@ public class HealthController {
      */
     @Operation(summary = "健康检查")
     @GetMapping
+    @BizApi(summary = "健康检查端点, 返回固定字符串 \"z-meta is running\"", description = "健康检查端点, 返回固定字符串 \"z-meta is running\".", tags = { "z-meta" })
     public Result<String> health() {
         return Result.success("z-meta is running");
     }
 }
+

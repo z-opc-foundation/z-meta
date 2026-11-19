@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.meta.core.domain.entity.ZPrivateConfigDO;
 import com.zifang.z.meta.core.domain.service.IPrivateConfigService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,11 +52,16 @@ public class PrivateConfigController {
      */
     @Operation(summary = "分页查询私有配置")
     @GetMapping("/list")
+    @BizApi(summary = "分页查询私有配置, 支持 configKey / description 模糊匹配, 按修改时间倒序", description = "分页查询私有配置, 支持 configKey / description 模糊匹配, 按修改时间倒序.", tags = { "z-meta" })
     public Result<IPage<ZPrivateConfigDO>> list(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") long pageNum,
-            @Parameter(description = "每页数量") @RequestParam(defaultValue = "20") long pageSize,
-            @Parameter(description = "配置键（模糊）") @RequestParam(required = false) String configKey,
-            @Parameter(description = "说明（模糊）") @RequestParam(required = false) String description) {
+            @Parameter(description = "页码") @RequestParam(defaultValue = "1")
+            @BizParam(name = "pageNum", type = BizField.FieldType.INTEGER, description = "页码", position = BizParam.Position.QUERY) long pageNum,
+            @Parameter(description = "每页数量") @RequestParam(defaultValue = "20")
+            @BizParam(name = "pageSize", type = BizField.FieldType.INTEGER, description = "每页数量", position = BizParam.Position.QUERY) long pageSize,
+            @Parameter(description = "配置键（模糊）") @RequestParam(required = false)
+            @BizParam(name = "configKey", type = BizField.FieldType.STRING, description = "配置键 (模糊), 可空", position = BizParam.Position.QUERY) String configKey,
+            @Parameter(description = "说明（模糊）") @RequestParam(required = false)
+            @BizParam(name = "description", type = BizField.FieldType.STRING, description = "说明 (模糊), 可空", position = BizParam.Position.QUERY) String description) {
 
         LambdaQueryWrapper<ZPrivateConfigDO> wrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(configKey)) {
@@ -77,7 +85,8 @@ public class PrivateConfigController {
      */
     @Operation(summary = "根据 ID 获取配置详情")
     @GetMapping("/get")
-    public Result<ZPrivateConfigDO> getById(@Parameter(description = "配置ID") @RequestParam Long id) {
+    @BizApi(summary = "按主键获取配置详情", description = "按主键获取配置详情.", tags = { "z-meta" })
+    public Result<ZPrivateConfigDO> getById(@Parameter(description = "配置ID") @RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "配置主键", position = BizParam.Position.QUERY) Long id) {
         ZPrivateConfigDO config = privateConfigService.getById(id);
         return Result.success(config);
     }
@@ -90,7 +99,8 @@ public class PrivateConfigController {
      */
     @Operation(summary = "根据配置键获取配置值")
     @GetMapping("/get-by-key")
-    public Result<ZPrivateConfigDO> getByKey(@Parameter(description = "配置键") @RequestParam String configKey) {
+    @BizApi(summary = "按 configKey 业务键获取配置值, 供业务运行时按名称读取配置", description = "按 configKey 业务键获取配置值, 供业务运行时按名称读取配置.", tags = { "z-meta" })
+    public Result<ZPrivateConfigDO> getByKey(@Parameter(description = "配置键") @RequestParam @BizParam(name = "configKey", type = BizField.FieldType.STRING, description = "配置键", position = BizParam.Position.QUERY) String configKey) {
         ZPrivateConfigDO config = privateConfigService.getByKey(configKey);
         return Result.success(config);
     }
@@ -103,7 +113,8 @@ public class PrivateConfigController {
      */
     @Operation(summary = "创建或更新配置（按 configKey 幂等）")
     @PostMapping
-    public Result<ZPrivateConfigDO> saveOrUpdate(@RequestBody ZPrivateConfigDO config) {
+    @BizApi(summary = "按 configKey 幂等保存或更新配置: 键已存在则更新 value/description, 否则新建", description = "按 configKey 幂等保存或更新配置: 键已存在则更新 value/description, 否则新建.", tags = { "z-meta" })
+    public Result<ZPrivateConfigDO> saveOrUpdate(@RequestBody @BizParam(name = "config", type = BizField.FieldType.STRING, description = "配置实体 (请求体, 内部填充 id), configKey 必填", position = BizParam.Position.BODY) ZPrivateConfigDO config) {
         if (!StringUtils.hasText(config.getConfigKey())) {
             return Result.fail("configKey 不能为空");
         }
@@ -131,9 +142,10 @@ public class PrivateConfigController {
      */
     @Operation(summary = "更新配置")
     @PutMapping
+    @BizApi(summary = "按主键更新配置", description = "按主键更新配置.", tags = { "z-meta" })
     public Result<ZPrivateConfigDO> update(
-            @Parameter(description = "配置ID") @RequestParam Long id,
-            @RequestBody ZPrivateConfigDO config) {
+            @Parameter(description = "配置ID") @RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "配置主键", position = BizParam.Position.QUERY) Long id,
+            @RequestBody @BizParam(name = "config", type = BizField.FieldType.STRING, description = "待更新字段", position = BizParam.Position.BODY) ZPrivateConfigDO config) {
         config.setId(id);
         privateConfigService.updateById(config);
         return Result.success(privateConfigService.getById(id));
@@ -147,8 +159,12 @@ public class PrivateConfigController {
      */
     @Operation(summary = "删除配置")
     @DeleteMapping
-    public Result<Object> delete(@Parameter(description = "配置ID") @RequestParam Long id) {
+    @BizApi(summary = "按主键删除配置", description = "按主键删除配置.", tags = { "z-meta" })
+    public Result<Object> delete(@Parameter(description = "配置ID") @RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "配置主键", position = BizParam.Position.QUERY) Long id) {
         privateConfigService.removeById(id);
         return Result.success();
     }
 }
+
+
+

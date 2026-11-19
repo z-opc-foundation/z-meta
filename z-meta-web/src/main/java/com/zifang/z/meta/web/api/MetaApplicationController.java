@@ -3,6 +3,9 @@ package com.zifang.z.meta.web.api;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.meta.core.domain.entity.ZApplicationDO;
 import com.zifang.z.meta.core.domain.service.IApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,14 +53,22 @@ public class MetaApplicationController {
      */
     @Operation(summary = "分页查询应用")
     @GetMapping("/list")
+    @BizApi(summary = "分页查询应用, 支持 tenantId / appCode / appName / appType / status 多条件过滤", description = "分页查询应用, 支持 tenantId / appCode / appName / appType / status 多条件过滤.", tags = { "z-meta" })
     public Result<IPage<ZApplicationDO>> list(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") long pageNum,
-            @Parameter(description = "每页数量") @RequestParam(defaultValue = "10") long pageSize,
-            @Parameter(description = "租户ID") @RequestParam(required = false) Long tenantId,
-            @Parameter(description = "应用编码") @RequestParam(required = false) String appCode,
-            @Parameter(description = "应用名称") @RequestParam(required = false) String appName,
-            @Parameter(description = "应用类型") @RequestParam(required = false) String appType,
-            @Parameter(description = "状态") @RequestParam(required = false) Integer status) {
+            @Parameter(description = "页码") @RequestParam(defaultValue = "1")
+            @BizParam(name = "pageNum", type = BizField.FieldType.INTEGER, description = "页码", position = BizParam.Position.QUERY) long pageNum,
+            @Parameter(description = "每页数量") @RequestParam(defaultValue = "10")
+            @BizParam(name = "pageSize", type = BizField.FieldType.INTEGER, description = "每页数量", position = BizParam.Position.QUERY) long pageSize,
+            @Parameter(description = "租户ID") @RequestParam(required = false)
+            @BizParam(name = "tenantId", type = BizField.FieldType.INTEGER, description = "租户 ID, 可空", position = BizParam.Position.QUERY) Long tenantId,
+            @Parameter(description = "应用编码") @RequestParam(required = false)
+            @BizParam(name = "appCode", type = BizField.FieldType.STRING, description = "应用编码, 可空", position = BizParam.Position.QUERY) String appCode,
+            @Parameter(description = "应用名称") @RequestParam(required = false)
+            @BizParam(name = "appName", type = BizField.FieldType.STRING, description = "应用名称, 可空", position = BizParam.Position.QUERY) String appName,
+            @Parameter(description = "应用类型") @RequestParam(required = false)
+            @BizParam(name = "appType", type = BizField.FieldType.STRING, description = "应用类型, 可空", position = BizParam.Position.QUERY) String appType,
+            @Parameter(description = "状态") @RequestParam(required = false)
+            @BizParam(name = "status", type = BizField.FieldType.INTEGER, description = "状态, 可空", position = BizParam.Position.QUERY) Integer status) {
 
         ZApplicationDO application = new ZApplicationDO();
         application.setTenantId(tenantId);
@@ -85,7 +96,8 @@ public class MetaApplicationController {
      */
     @Operation(summary = "获取应用详情")
     @GetMapping("/get")
-    public Result<ZApplicationDO> getById(@Parameter(description = "应用ID") @RequestParam Long id) {
+    @BizApi(summary = "按 id 获取应用详情", description = "按 id 获取应用详情.", tags = { "z-meta" })
+    public Result<ZApplicationDO> getById(@Parameter(description = "应用ID") @RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "应用主键", position = BizParam.Position.QUERY) Long id) {
         ZApplicationDO application = applicationService.getById(id);
         return Result.success(application);
     }
@@ -100,7 +112,8 @@ public class MetaApplicationController {
      */
     @Operation(summary = "创建应用")
     @PostMapping
-    public Result<ZApplicationDO> create(@RequestBody ZApplicationDO application) {
+    @BizApi(summary = "创建一个新应用", description = "创建一个新应用. 默认使用系统租户 (id=1); 同一租户下 appCode 重复时返回失败.", tags = { "z-meta" })
+    public Result<ZApplicationDO> create(@RequestBody @BizParam(name = "application", type = BizField.FieldType.STRING, description = "应用实体 (请求体, 内部填充 id 与默认 tenantId)", position = BizParam.Position.BODY) ZApplicationDO application) {
         // 默认使用系统租户 (id=1)
         if (application.getTenantId() == null) {
             application.setTenantId(1L);
@@ -123,7 +136,8 @@ public class MetaApplicationController {
      */
     @Operation(summary = "更新应用")
     @PutMapping
-    public Result<ZApplicationDO> update(@Parameter(description = "应用ID") @RequestParam Long id, @RequestBody ZApplicationDO application) {
+    @BizApi(summary = "按 id 更新应用", description = "按 id 更新应用.", tags = { "z-meta" })
+    public Result<ZApplicationDO> update(@Parameter(description = "应用ID") @RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "应用主键", position = BizParam.Position.QUERY) Long id, @RequestBody @BizParam(name = "application", type = BizField.FieldType.STRING, description = "待更新字段", position = BizParam.Position.BODY) ZApplicationDO application) {
         application.setId(id);
         applicationService.updateById(application);
         return Result.success(applicationService.getById(id));
@@ -137,8 +151,10 @@ public class MetaApplicationController {
      */
     @Operation(summary = "删除应用")
     @DeleteMapping
-    public Result<Object> delete(@Parameter(description = "应用ID") @RequestParam Long id) {
+    @BizApi(summary = "按 id 删除应用", description = "按 id 删除应用.", tags = { "z-meta" })
+    public Result<Object> delete(@Parameter(description = "应用ID") @RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "应用主键", position = BizParam.Position.QUERY) Long id) {
         applicationService.removeById(id);
         return Result.success();
     }
 }
+

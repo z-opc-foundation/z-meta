@@ -3,6 +3,9 @@ package com.zifang.z.meta.web.api;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.meta.core.domain.entity.ZTenantDO;
 import com.zifang.z.meta.core.domain.service.ITenantService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,13 +54,20 @@ public class MetaTenantController {
      */
     @Operation(summary = "分页查询租户")
     @GetMapping("/list")
+    @BizApi(summary = "分页查询租户, 支持 tenantCode / tenantName / tenantType / status 多条件过滤", description = "分页查询租户, 支持 tenantCode / tenantName / tenantType / status 多条件过滤.", tags = { "z-meta" })
     public Result<IPage<ZTenantDO>> list(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") long pageNum,
-            @Parameter(description = "每页数量") @RequestParam(defaultValue = "10") long pageSize,
-            @Parameter(description = "租户编码") @RequestParam(required = false) String tenantCode,
-            @Parameter(description = "租户名称") @RequestParam(required = false) String tenantName,
-            @Parameter(description = "租户类型") @RequestParam(required = false) String tenantType,
-            @Parameter(description = "状态") @RequestParam(required = false) Integer status) {
+            @Parameter(description = "页码") @RequestParam(defaultValue = "1")
+            @BizParam(name = "pageNum", type = BizField.FieldType.INTEGER, description = "页码", position = BizParam.Position.QUERY) long pageNum,
+            @Parameter(description = "每页数量") @RequestParam(defaultValue = "10")
+            @BizParam(name = "pageSize", type = BizField.FieldType.INTEGER, description = "每页数量", position = BizParam.Position.QUERY) long pageSize,
+            @Parameter(description = "租户编码") @RequestParam(required = false)
+            @BizParam(name = "tenantCode", type = BizField.FieldType.STRING, description = "租户编码, 可空", position = BizParam.Position.QUERY) String tenantCode,
+            @Parameter(description = "租户名称") @RequestParam(required = false)
+            @BizParam(name = "tenantName", type = BizField.FieldType.STRING, description = "租户名称, 可空", position = BizParam.Position.QUERY) String tenantName,
+            @Parameter(description = "租户类型") @RequestParam(required = false)
+            @BizParam(name = "tenantType", type = BizField.FieldType.STRING, description = "租户类型, 可空", position = BizParam.Position.QUERY) String tenantType,
+            @Parameter(description = "状态") @RequestParam(required = false)
+            @BizParam(name = "status", type = BizField.FieldType.INTEGER, description = "状态, 可空", position = BizParam.Position.QUERY) Integer status) {
 
         ZTenantDO tenant = new ZTenantDO();
         if (StringUtils.hasText(tenantCode)) {
@@ -84,7 +94,8 @@ public class MetaTenantController {
      */
     @Operation(summary = "获取租户详情")
     @GetMapping("/get")
-    public Result<ZTenantDO> getById(@Parameter(description = "租户ID") @RequestParam Long id) {
+    @BizApi(summary = "按 id 获取租户详情", description = "按 id 获取租户详情.", tags = { "z-meta" })
+    public Result<ZTenantDO> getById(@Parameter(description = "租户ID") @RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "租户主键", position = BizParam.Position.QUERY) Long id) {
         ZTenantDO tenant = tenantService.getById(id);
         return Result.success(tenant);
     }
@@ -97,7 +108,8 @@ public class MetaTenantController {
      */
     @Operation(summary = "创建租户")
     @PostMapping
-    public Result<ZTenantDO> create(@RequestBody ZTenantDO tenant) {
+    @BizApi(summary = "创建一个新租户, 编码重复时返回失败", description = "创建一个新租户, 编码重复时返回失败.", tags = { "z-meta" })
+    public Result<ZTenantDO> create(@RequestBody @BizParam(name = "tenant", type = BizField.FieldType.STRING, description = "租户实体 (请求体, 内部填充 id)", position = BizParam.Position.BODY) ZTenantDO tenant) {
         // 检查租户编码是否已存在
         ZTenantDO exist = tenantService.getByTenantCode(tenant.getTenantCode());
         if (exist != null) {
@@ -116,7 +128,8 @@ public class MetaTenantController {
      */
     @Operation(summary = "更新租户")
     @PutMapping
-    public Result<ZTenantDO> update(@Parameter(description = "租户ID") @RequestParam Long id, @RequestBody ZTenantDO tenant) {
+    @BizApi(summary = "按 id 更新租户", description = "按 id 更新租户.", tags = { "z-meta" })
+    public Result<ZTenantDO> update(@Parameter(description = "租户ID") @RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "租户主键", position = BizParam.Position.QUERY) Long id, @RequestBody @BizParam(name = "tenant", type = BizField.FieldType.STRING, description = "待更新字段", position = BizParam.Position.BODY) ZTenantDO tenant) {
         tenant.setId(id);
         tenantService.updateById(tenant);
         return Result.success(tenantService.getById(id));
@@ -130,8 +143,10 @@ public class MetaTenantController {
      */
     @Operation(summary = "删除租户")
     @DeleteMapping
-    public Result<Object> delete(@Parameter(description = "租户ID") @RequestParam Long id) {
+    @BizApi(summary = "按 id 删除租户", description = "按 id 删除租户.", tags = { "z-meta" })
+    public Result<Object> delete(@Parameter(description = "租户ID") @RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "租户主键", position = BizParam.Position.QUERY) Long id) {
         tenantService.removeById(id);
         return Result.success();
     }
 }
+

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.meta.core.domain.entity.ZTenantDO;
 import com.zifang.z.meta.core.domain.mapper.ZTenantMapper;
 import com.zifang.z.meta.core.domain.service.ITenantService;
@@ -19,6 +20,7 @@ import org.springframework.util.StringUtils;
 public class TenantServiceImpl extends ServiceImpl<ZTenantMapper, ZTenantDO> implements ITenantService {
 
     @Override
+    @BizMethod(name = "pageTenant", module = "z-meta", description = "", operation = BizMethod.Operation.QUERY)
     public IPage<ZTenantDO> pageTenant(Page<ZTenantDO> page, ZTenantDO tenant) {
         LambdaQueryWrapper<ZTenantDO> wrapper = new LambdaQueryWrapper<>();
         if (tenant != null) {
@@ -40,7 +42,9 @@ public class TenantServiceImpl extends ServiceImpl<ZTenantMapper, ZTenantDO> imp
     }
 
     @Override
+    @BizMethod(name = "getByTenantCode", module = "z-meta", description = "", operation = BizMethod.Operation.QUERY)
     public ZTenantDO getByTenantCode(String tenantCode) {
         return getOne(new LambdaQueryWrapper<ZTenantDO>().eq(ZTenantDO::getTenantCode, tenantCode));
     }
 }
+
