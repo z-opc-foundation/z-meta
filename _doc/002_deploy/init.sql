@@ -109,109 +109,7 @@ CREATE TABLE IF NOT EXISTS `z_application`
 )
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用表';
 
--- 3. 字典类型表
-DROP TABLE IF EXISTS `z_dict_type`;
-CREATE TABLE IF NOT EXISTS `z_dict_type`
-(
-    `id`
-    bigint
-(
-    20
-) NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `tenant_id` bigint
-(
-    20
-) NOT NULL COMMENT '租户ID',
-    `dict_code` varchar
-(
-    64
-) NOT NULL COMMENT '字典编码',
-    `dict_name` varchar
-(
-    128
-) NOT NULL COMMENT '字典名称',
-    `dict_type` varchar
-(
-    32
-) DEFAULT 'custom' COMMENT '字典类型（system/custom）',
-    `status` tinyint
-(
-    1
-) DEFAULT 1 COMMENT '状态',
-    `description` varchar
-(
-    500
-) DEFAULT NULL COMMENT '描述',
-    `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    PRIMARY KEY
-(
-    `id`
-),
-    UNIQUE KEY `uk_dict_code_tenant`
-(
-    `dict_code`,
-    `tenant_id`
-),
-    KEY `idx_tenant_id`
-(
-    `tenant_id`
-)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='字典类型表';
-
--- 4. 字典项表
-DROP TABLE IF EXISTS `z_dict_item`;
-CREATE TABLE IF NOT EXISTS `z_dict_item`
-(
-    `id`
-    bigint
-(
-    20
-) NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `dict_id` bigint
-(
-    20
-) NOT NULL COMMENT '字典类型ID',
-    `item_code` varchar
-(
-    64
-) NOT NULL COMMENT '字典项编码',
-    `item_name` varchar
-(
-    128
-) NOT NULL COMMENT '字典项名称',
-    `item_value` varchar
-(
-    255
-) NOT NULL COMMENT '字典项值',
-    `sort_order` int
-(
-    11
-) DEFAULT 0 COMMENT '排序',
-    `status` tinyint
-(
-    1
-) DEFAULT 1 COMMENT '状态',
-    `parent_id` bigint
-(
-    20
-) DEFAULT NULL COMMENT '父级ID',
-    `ext_props` text COMMENT '扩展属性',
-    `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-    PRIMARY KEY
-(
-    `id`
-),
-    KEY `idx_dict_id`
-(
-    `dict_id`
-),
-    KEY `idx_parent_id`
-(
-    `parent_id`
-)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='字典项表';
+-- 3/4. 字典表已迁出: 字典能力 2026-11-18 归 z-ctc (z_ctc_dict_category / z_ctc_dictionary), DDL 见 z-ctc/_doc/002_deploy/init/z-ctc-dict.sql
 
 -- 5. 接口清单表
 DROP TABLE IF EXISTS `z_api`;
@@ -362,3 +260,61 @@ CREATE TABLE IF NOT EXISTS `z_private_config`
     `config_key`
 )
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='私有配置表';
+-- 9. 技术资源台账表（各模块 ResourceProvider 主动上报：数据库/缓存/队列/模型服务/存储桶）
+CREATE TABLE IF NOT EXISTS `z_resource`
+(
+    `id`
+    bigint
+(
+    20
+) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `resource_code` varchar
+(
+    128
+) NOT NULL COMMENT '资源编码（唯一）',
+    `resource_name` varchar
+(
+    128
+) NOT NULL COMMENT '资源名称',
+    `resource_type` varchar
+(
+    32
+) NOT NULL COMMENT '资源类型（database/cache/queue/model/storage...）',
+    `module` varchar
+(
+    64
+) DEFAULT NULL COMMENT '上报方模块',
+    `status` varchar
+(
+    32
+) DEFAULT NULL COMMENT '状态',
+    `endpoint` varchar
+(
+    500
+) DEFAULT NULL COMMENT '端点信息',
+    `spec` varchar
+(
+    500
+) DEFAULT NULL COMMENT '规格配置',
+    `attributes` text COMMENT '属性信息（JSON 格式）',
+    `tenant_code` varchar
+(
+    64
+) DEFAULT NULL COMMENT '租户编码',
+    `domain_code` varchar
+(
+    64
+) DEFAULT NULL COMMENT '域编码',
+    `collected_at` datetime DEFAULT NULL COMMENT '采集时间',
+    `expire_at` datetime DEFAULT NULL COMMENT '过期时间',
+    `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY
+(
+    `id`
+),
+    UNIQUE KEY `uk_resource_code`
+(
+    `resource_code`
+)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技术资源台账表';

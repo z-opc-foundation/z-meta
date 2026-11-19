@@ -1,8 +1,8 @@
 # z-meta
 
-> 元数据管理平台 —— 租户 / 应用 / 字典 / 接口清单 / 私有配置的集中登记处，外加 `@BizModel` 业务模型注解采集
+> 元数据管理平台 —— 租户 / 应用 / 接口清单 / 私有配置的集中登记处，外加 `@BizModel` 业务模型注解采集
 
-一人公司基座里"谁有什么数据、谁调什么接口"的那本账：把租户、应用、数据字典、API 清单、私有配置
+一人公司基座里"谁有什么数据、谁调什么接口"的那本账：把租户、应用、API 清单、私有配置
 落库成可查可改的元数据，并在启动时扫描 `com.zifang` 包下带 `@BizModel` / `@BizField` 的实体，
 把字段级模型口径当场采集成可查询的元数据。`z-meta-web` 是可直接嵌进宿主应用的库，
 `z-meta-admin` 只是同代码的独立启动壳。
@@ -15,9 +15,9 @@
 |------|-----|
 | **仓库** | `z-meta` |
 | **Maven 坐标** | `io.github.yuku123:z-meta`（根聚合 POM，`<packaging>pom</packaging>`） |
-| **当前版本** | `1.0.1`（根 POM 写字面 `<version>1.0.1</version>`，**不是** `${revision}`；flatten-maven-plugin 1.5.0 + `oss` 模式常开） |
-| **父项目** | `io.github.yuku123:z-boot-parent:1.2.4`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘） |
-| **Maven Central** | `1.0.0` 已发布（repo1 实测 200）；**2026-11-06 修复版 `1.0.1` 重新发布**；`z-meta-admin`、`z-meta-frontend` 为 404（不在 reactor，不发布）；旧 `com.zifang` namespace 整树 404 |
+| **当前版本** | `1.0.2`（根 POM 写字面 `<version>1.0.2</version>`，**不是** `${revision}`；flatten-maven-plugin 1.5.0 + `oss` 模式常开） |
+| **父项目** | `io.github.yuku123:z-boot-parent:1.2.6`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘） |
+| **Maven Central** | `1.0.0` / `1.0.1` 已发布（repo1 实测 200）；**`1.0.2` 待发**（本版新增 `@BizMethod` / `@BizParam` / `@BizApi` / `@BizCause` 与 `ResourceProvider` SPI）；`z-meta-admin`、`z-meta-frontend` 为 404（不在 reactor，不发布）；旧 `com.zifang` namespace 整树 404 |
 | **默认端口** | `8080`（**仓内没有任何 yml 设置 `server.port`**，取 Spring Boot 默认值；`Dockerfile` 亦 `EXPOSE 8080`，运维脚本映射宿主机 `8094`） |
 | **context-path** | 仓内未设置；前端、nginx、vite 代理都按 `/meta` 前缀对接，需运行时注入 `--server.servlet.context-path=/meta` |
 | **运行口径** | Java 17（根 POM `<compile.version>17</compile.version>`）· Spring Boot 3.3.13 |
@@ -34,10 +34,14 @@
 |------|------|-----------|
 | 租户管理 | `MetaTenantController` | `ZTenantDO` → `z_tenant`（tenantCode / tenantName / tenantType / expireTime / status） |
 | 应用管理 | `MetaApplicationController` | `ZApplicationDO` → `z_application`（tenantId / appCode / appName / appType / baseUrl / owner） |
-| 字典管理 | `DictController`（`/type` 与 `/item` 两组） | `ZDictTypeDO` → `z_dict_type`、`ZDictItemDO` → `z_dict_item` |
 | 接口清单 | `ApiController` | `ZApiDO` → `z_api`（appId / apiPath / apiMethod / apiVersion / authType / deprecated） |
 | 私有配置 | `PrivateConfigController`（含 `get-by-key`、按 `configKey` 幂等 upsert） | `ZPrivateConfigDO` → `z_private_config` |
 | 业务模型采集 | `BizModelController` + `BizModelCollector`（`@PostConstruct` 扫 `com.zifang`） | 注解定义在 `z-meta-api`：`@BizModel(name/module/description)`、`@BizField(name/type/refModel/refModule/dictCode)`，10 种 `FieldType`；结果驻留内存，**不落库** |
+| 注解体系扩展 | `z-meta-api` 的 `@BizMethod` / `@BizParam` / `@BizApi` / `@BizCause` | 方法（业务名/操作类型/幂等）、参数（必填/位置/引用模型/字典）、端点（摘要/标签/废弃）、因果链（因为/条件/导致/权重）—— 零依赖，宿主只引 `z-meta-api` 即可标注 |
+| 接口契约采集 | `ApiContractCollector`（扫 `@RestController`） | 路径与 HTTP 方法一律取自 Spring 映射注解，`@Biz*` 只补业务语义；产出 `BizApiDTO` 端点契约 |
+| 自研 OpenAPI 文档 | `MetaDocumentController` + `OpenApiDocumentGenerator` | `GET /api/meta/openapi.json`：OpenAPI 3.1 文档 + `components.schemas` 业务模型 + 参数 `x-refModel`/`x-dictCode` + 端点 `x-operation` + 顶层 `x-causes` |
+| 因果链导出 | `MetaDocumentController` | `GET /api/meta/causes`（因果边）、`GET /api/meta/methods`（方法元数据）—— 供认知板块摄取 |
+| 技术资源台账 | `ResourceController` + `ResourceCollector` + `ResourceProviderRegistry` | 各模块实现 `ResourceProvider`（在 `z-meta-api`）主动上报数据库/缓存/队列/模型服务/存储桶，z-meta 自动登记并落库 `z_resource`；`POST /api/meta/resource/collect` 触发采集，`GET /list` 查台账，`GET /providers` 查上报方花名册 |
 | 健康检查 | `HealthController`（bean 名 `metaHealthController`） | 固定返回 `z-meta is running` |
 | 模块数据源装配 | `MetaModuleDataSource`（继承 `z-boot-datasource-starter` 的 `ModuleDataSourceTemplate`） | `dataSourceMeta` + `sqlSessionFactoryMeta`，`@MapperScan("com.zifang.z.meta.core.domain.mapper")` |
 | 自动装配 | `ZMetaAutoConfiguration`（`@ComponentScan("com.zifang.z.meta")`） | 经 `z-meta-web/src/main/resources/META-INF/spring.factories` 生效 |
@@ -50,13 +54,13 @@
 
 ```
 z-meta/
-├── pom.xml                # 根聚合 POM：继承 z-boot-parent:1.2.4，version 1.0.1
+├── pom.xml                # 根聚合 POM：继承 z-boot-parent:1.2.6，version 1.0.2
 ├── Dockerfile             # 后端镜像（eclipse-temurin:8-jdk，EXPOSE 8080）
 ├── LICENSE                # MIT，Copyright (c) 2026 z-opc-foundation
 ├── README.md              # 本文档
-├── z-meta-api/            # 注解 API：@BizModel / @BizField，零实现零依赖（进 Central）
-├── z-meta-core/           # 实体 + MyBatis Mapper + Service + BizModelCollector（进 Central）
-├── z-meta-web/            # HTTP 层：7 个 Controller + 自动装配 + 模块数据源（进 Central）
+├── z-meta-api/            # 注解 API：@BizModel / @BizField / @BizMethod / @BizParam / @BizApi / @BizCause + ResourceProvider SPI，零实现零依赖（进 Central）
+├── z-meta-core/           # 实体 + MyBatis Mapper + Service + BizModelCollector + ApiContractCollector + OpenApiDocumentGenerator + 资源采集（进 Central）
+├── z-meta-web/            # HTTP 层：8 个 Controller + 自动装配 + 模块数据源（进 Central）
 ├── z-meta-admin/          # 独立启动壳：不在 <modules>，不参与 reactor、不上 Central
 │   └── src/main/resources/static/   # 前端产物快照（git 实测 10 个文件）
 ├── _frontend/             # Vite + React 19 + antd 6 独立 npm 工程（同样不在 <modules>）
@@ -99,9 +103,9 @@ Maven 发布，否则构建会去 nodejs.org 下 node（它的 dist 由 `_fronte
 mvn clean install -DskipTests
 ```
 
-本仓**自包含**：parent 是 repo1 上的 `io.github.yuku123:z-boot-parent:1.2.4`，`<relativePath/>` 留空，
+本仓**自包含**：parent 是 repo1 上的 `io.github.yuku123:z-boot-parent:1.2.6`，`<relativePath/>` 留空，
 不需要任何"父项目目录"，也不需要 monorepo 时代的 `../pom.xml`。只要本机能解析到那条 parent 就能构建。
-第三方版本一律由 `z-boot-parent:1.2.4` 供给（第三方地板与兄弟仓权威表均已并入 parent 自身），
+第三方版本一律由 `z-boot-parent:1.2.6` 供给（第三方地板与兄弟仓权威表均已并入 parent 自身），
 模块 POM 里不应再出现字面版本钉。
 
 ### standalone 跑 admin
@@ -114,7 +118,7 @@ mvn clean install -DskipTests
 mvn -f z-meta-admin/pom.xml clean package -DskipTests
 
 # 3) 起服务：repackage 带 <classifier>exec</classifier>，可执行的是 -exec 那一只
-java -jar z-meta-admin/target/z-meta-admin-1.0.1-exec.jar \
+java -jar z-meta-admin/target/z-meta-admin-1.0.2-exec.jar \
   --server.port=18086 \
   --server.servlet.context-path=/meta \
   --z.meta.standalone=true
@@ -156,15 +160,21 @@ exec 形式 ENTRYPOINT，不经过 shell，所以 `JAVA_OPTS`、`SPRING_PROFILES
 |------|------------|-----------|
 | `/api/meta-tenant` | `MetaTenantController` | `GET /list`、`GET /get`、`POST`、`PUT`、`DELETE` |
 | `/api/meta-app` | `MetaApplicationController` | `GET /list`、`GET /get`、`POST`、`PUT`、`DELETE` |
-| `/api/dict` | `DictController` | `GET /type/list`、`GET /type/get`、`POST`/`PUT`/`DELETE` `/type`、`GET /item/list`、`GET /items/get`、`POST`/`PUT`/`DELETE` `/item` |
 | `/api/interface` | `ApiController` | `GET /list`、`GET /get`、`GET /app/list`、`POST`、`PUT`、`DELETE` |
 | `/api/private-config` | `PrivateConfigController` | `GET /list`、`GET /get`、`GET /get-by-key`、`POST`、`PUT`、`DELETE` |
 | `/api/meta` | `BizModelController` | `GET /models`、`GET /models/{code}`、`GET /models/module/{module}` |
+| `/api/meta` | `MetaDocumentController` | `GET /openapi.json`、`GET /causes`、`GET /methods` |
+| `/api/meta/resource` | `ResourceController` | `POST /collect`、`GET /list`、`GET /providers` |
 | `/api/health` | `HealthController` | `GET` → `z-meta is running` |
 
-接口文档由 knife4j 提供（`z-meta-web` / `z-meta-admin` 均引该 starter，版本 4.1.0 由父链下发）：
-服务带 `/meta` 前缀启动后访问 `http://localhost:<port>/meta/doc.html`。
-本仓不产出 `swagger-ui.html`，历史 README 里那条地址已删。
+接口文档有两份，用途不同：
+
+- **knife4j**（`z-meta-web` / `z-meta-admin` 均引该 starter，版本 4.1.0 由父链下发）：
+  服务带 `/meta` 前缀启动后访问 `http://localhost:<port>/meta/doc.html`。
+  本仓不产出 `swagger-ui.html`，历史 README 里那条地址已删。
+- **自研 OpenAPI**（`GET /api/meta/openapi.json`）：路径与 HTTP 方法取自 Spring 映射注解，
+  业务语义取自 `@Biz*` 注解——比 Swagger 多出 `components.schemas`（业务模型）、
+  参数的 `x-refModel` / `x-dictCode`、端点的 `x-operation`、以及 Swagger 没有的顶层 `x-causes`（因果链）。
 
 ---
 
@@ -218,6 +228,7 @@ nginx 侧把 `/meta` 反代到 `http://z-meta:8080`（见 [`_frontend/z-meta-sui
 
 | 日期 | 变更 |
 |------|------|
+| 2026-11-19 | **注解体系扩到六件 + 自研 OpenAPI + 资源台账并入**：新增 `@BizMethod`（方法业务语义/操作类型/幂等）、`@BizParam`（入参业务语义/位置/引用模型/字典）、`@BizApi`（端点契约：摘要/标签/废弃）、`@BizCause`（因果边：因为/前提/导致/权重）；`BizModelCollector` 扩到方法/参数/因果三级（新增 ASM 级 `MethodAnnotationTypeFilter`，Spring 自带过滤器只看类级注解会一个都扫不到）；新增 `ApiContractCollector` + `OpenApiDocumentGenerator`，产出比 Swagger 多业务语义的 OpenAPI 3.1 文档（`GET /api/meta/openapi.json`，含 `components.schemas` / `x-causes`）；z-asset 的主动上报能力（`ResourceProvider` SPI + 采集器 + `z_resource` 表）并入本仓。版本 `1.0.1` → `1.0.2`。 |
 | 2026-09-30 | `release:` groupId `com.zifang` → `io.github.yuku123`、版本 `1.0.1-SNAPSHOT` → `1.0.1`，补 `central` / `central-dryrun` 发布 profile；四件已上 repo1 |
 | 2026-09-30 | 三处 `com.zifang:z-boot-*-starter` 依赖换到 `io.github.yuku123` 发布坐标（clean-room 可构建） |
 | 2026-09-29 | 消费入口抬到 `z-boot-parent:1.2.4`（消费者轮） |
@@ -251,8 +262,9 @@ _Maintained by the z-opc-foundation organization._
   - [`09-design.md`](_doc/001_arch/09-design.md) — 系统概述与能力设计
 
 - [`_doc/002_deploy/`](_doc/002_deploy/) — 部署 SQL：
-  - [`init.sql`](_doc/002_deploy/init.sql) — 建表脚本，实测含 `z_tenant`、`z_application`、`z_dict_type`、
-    `z_dict_item`、`z_api`、`z_private_config`，以及代码里没有对应实体的 `z_users` / `z_roles`
+  - [`init.sql`](_doc/002_deploy/init.sql) — 建表脚本，实测含 `z_tenant`、`z_application`、`z_api`、
+    `z_private_config`、`z_resource`，以及代码里没有对应实体的 `z_users` / `z_roles`
+    （字典两张表已随字典能力迁出至 z-ctc，2026-11-18 从本脚本移除）
 
 - [`_doc/003_script/`](_doc/003_script/) — 运维脚本：
   - [`build.sh`](_doc/003_script/build.sh)

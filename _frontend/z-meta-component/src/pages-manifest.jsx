@@ -1,9 +1,8 @@
-import { ApiOutlined, AppstoreOutlined, BookOutlined, DashboardOutlined, HomeOutlined, ReadOutlined, UserOutlined } from '@ant-design/icons'
+import { ApiOutlined, AppstoreOutlined, DashboardOutlined, HomeOutlined, ReadOutlined, UserOutlined } from '@ant-design/icons'
 import Login from './pages/login/Login'
 import Dashboard from './pages/Dashboard'
 import TenantList from './pages/tenant/TenantList'
 import AppList from './pages/application/AppList'
-import DictList from './pages/dict/DictList'
 import ApiList from './pages/api/ApiList'
 
 /** 菜单 + 路由清单（lead 005 §8.2 manifest）。App 壳在 suit/宿主侧组装。 */
@@ -22,7 +21,6 @@ export const menuItems = [
     { key: '/z-meta/dashboard', label: '概览', icon: <DashboardOutlined /> },
     { key: '/z-meta/tenant', label: '租户管理', icon: <UserOutlined /> },
     { key: '/z-meta/app', label: '应用管理', icon: <AppstoreOutlined /> },
-    { key: '/z-meta/dict', label: '字典管理', icon: <BookOutlined /> },
     { key: '/z-meta/api', label: '接口管理', icon: <ApiOutlined /> },
     { key: '/z-meta/docs', label: '组件文档', icon: <ReadOutlined /> },
 ]
@@ -32,7 +30,6 @@ export const routes = [
     { path: '/z-meta/dashboard', Component: Dashboard },
     { path: '/z-meta/tenant', Component: TenantList },
     { path: '/z-meta/app', Component: AppList },
-    { path: '/z-meta/dict', Component: DictList },
     { path: '/z-meta/api', Component: ApiList },
     { path: '/z-meta/docs', Component: ComponentDocPage },
     { path: '/z-meta/:rest*', Component: MetaApp },

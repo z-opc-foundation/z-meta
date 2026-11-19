@@ -1,7 +1,6 @@
 import {Navigate, Route, Routes} from 'react-router-dom'
 import AppList from './AppList'
 import TenantList from './TenantList'
-import DictList from './DictList'
 import InterfaceList from './InterfaceList'
 import PrivateConfigList from './PrivateConfigList'
 import BizModels from './BizModels'
@@ -13,7 +12,6 @@ export default function MetaApp() {
             <Route index element={<Navigate to="app" replace/>}/>
             <Route path="app" element={<AppList/>}/>
             <Route path="tenant" element={<TenantList/>}/>
-            <Route path="dict" element={<DictList/>}/>
             <Route path="interface" element={<InterfaceList/>}/>
             <Route path="private-config" element={<PrivateConfigList/>}/>
             <Route path="models" element={<BizModels/>}/>

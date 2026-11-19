@@ -12,11 +12,6 @@ export const metaApi = {
 
     tenantPage: (pageNum, pageSize) => request.get('/meta-tenant/list', {params: {pageNum, pageSize}}),
 
-    dictTypePage: (pageNum, pageSize, dictName) =>
-        request.get('/dict/type/list', {params: {pageNum, pageSize, dictName}}),
-    dictItemsByCode: (dictCode) => request.get('/dict/items/get', {params: {dictCode}}),
-    dictItemsByTypeId: (dictId) => request.get('/dict/item/list', {params: {dictId}}),
-
     interfacePage: (pageNum, pageSize) => request.get('/interface/list', {params: {pageNum, pageSize}}),
     interfaceByApp: (appId) => request.get('/interface/app/list', {params: {appId}}),
 

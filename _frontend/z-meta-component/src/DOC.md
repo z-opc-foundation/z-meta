@@ -21,22 +21,22 @@ z-meta（元数据中心）跨仓唯一前端面：把「租户 / 应用 / 数�
 | 概览 | `dashboard` | `pages/Dashboard.jsx` | 租户 / 应用 / 字典 / 接口四张统计卡（当前为静态占位值） |
 | 租户管理 | `tenant` | `pages/tenant/TenantList.jsx` | 租户台账的增删改查 |
 | 应用管理 | `app` | `pages/application/AppList.jsx` | 应用台账的增删改查 |
-| 字典管理 | `dict` | `pages/dict/DictList.jsx` | 字典类型 + 字典项两级增删改查 |
 | 接口管理 | `api` | `pages/api/ApiList.jsx` | 接口台账的增删改查 |
 | 应用元数据（只读台账） | `*/app` | `pages/AppList.jsx` | 只读应用列表（基座 `PagedTable`） |
 | 租户管理（只读台账） | `*/tenant` | `pages/TenantList.jsx` | 只读租户列表（基座 `PagedTable`） |
-| 数据字典（只读台账） | `*/dict` | `pages/DictList.jsx` | 只读字典类型列表，展开行按 `dict_code` 实时拉字典项 |
 | 接口台账 | `*/interface` | `pages/InterfaceList.jsx` | 只读业务接口清单（基座 `PagedTable`） |
 | 私有配置 | `*/private-config` | `pages/PrivateConfigList.jsx` | 只读应用私有键值配置（基座 `PagedTable`） |
 | 业务模型 | `*/models` | `pages/BizModels.jsx` | 只读结构化业务模型清单（含字段数） |
 | 组件文档 | `docs` | `pages/ComponentDoc.jsx` | 本文件渲染页（左侧 240px TOC + 右侧正文） |
 
-`src/pages/MetaApp.jsx` 是只读台账一组的子路由挂载点（`app` / `tenant` / `dict` / `interface` /
+`src/pages/MetaApp.jsx` 是只读台账一组的子路由挂载点（`app` / `tenant` / `interface` /
 `private-config` / `models`），被 `routes` 里的 `/z-meta/:rest*` 承接，同时从包根具名导出。
 
-> ⚠ **两套同名页面并存**：manifest 里 `/z-meta/tenant`、`/z-meta/app`、`/z-meta/dict`、`/z-meta/api`
-> 挂的是 `pages/{tenant,application,dict,api}/` 下的**可写 CRUD 版**；`MetaApp` 里的
-> `app` / `tenant` / `dict` 挂的是 `pages/` 根目录下的**只读台账版**。路由不同、行为不同，别混。
+> ⚠ **两套同名页面并存**：manifest 里 `/z-meta/tenant`、`/z-meta/app`、`/z-meta/api`
+> 挂的是 `pages/{tenant,application,api}/` 下的**可写 CRUD 版**；`MetaApp` 里的
+> `app` / `tenant` 挂的是 `pages/` 根目录下的**只读台账版**。路由不同、行为不同，别混。
+> 字典页已于 2026-11-18 随字典能力整体迁往 z-ctc（`@yuku123/z-ctc-component` 的 DictPage，
+> 后端 `/api/ctc/ac/dict`），z-meta 不再承载字典。
 
 ## 二、导出面
 
