@@ -26,3 +26,10 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   type-aliases-package: com.zifang.z.meta.core.domain.entity
+z:
+  ext:
+    # z-ext 预置埋点自登记控制台（运行期可被控制台切换扩展点实现）
+    console:
+      enabled: true
+      url: ${ZEXT_CONSOLE_URL:http://192.168.31.136:8888}
+
