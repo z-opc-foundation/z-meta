@@ -61,6 +61,18 @@
             <artifactId>z-meta-api</artifactId>
             <version>${z-meta.version}</version>
         </dependency>
+        <!-- 建站初始化标准协议: 4A 中心发布契约 (z-ctc-common) + 域侧装配层
+             (自动暴露 /api/site-init/** 端点并向 ctc 自登记) -->
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-ctc-common</artifactId>
+            <version>${z-ctc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-ctc-site-init-starter</artifactId>
+            <version>${z-ctc.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

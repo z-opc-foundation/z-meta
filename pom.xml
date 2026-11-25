@@ -102,6 +102,8 @@
     </modules>
     <properties>
         <z-meta.version>1.0.2</z-meta.version>
+        <!-- 建站初始化标准协议的 4A 中心坐标 (z-ctc-common 契约 + z-ctc-site-init-starter 装配层) -->
+        <z-ctc.version>1.0.10</z-ctc.version>
         <!-- 迁移删掉的键（逐条按**坐标**对过 parent_preflight 第 2 节 + 两侧 dependency:tree 实测）：
                maven.compiler.source / maven.compiler.target / project.build.sourceEncoding
                    → 父链 z-boot-parent 的 properties 就是 8 / 8 / UTF-8，逐字同值（旧 parent 供的是
